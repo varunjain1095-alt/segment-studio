@@ -1,0 +1,122 @@
+{
+  "model_type": "RandomForest",
+  "winning_model": "RandomForest",
+  "pr_auc": 0.2951,
+  "roc_auc": 0.5517,
+  "f1": 0.0731,
+  "candidates": [
+    {
+      "name": "RandomForest",
+      "pr_auc": 0.2951,
+      "roc_auc": 0.5517,
+      "f1": 0.0731,
+      "precision": 0.5333,
+      "recall": 0.0392
+    },
+    {
+      "name": "LogisticRegression",
+      "pr_auc": 0.273,
+      "roc_auc": 0.5464,
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    {
+      "name": "GradientBoosting",
+      "pr_auc": 0.2383,
+      "roc_auc": 0.5018,
+      "f1": 0.0187,
+      "precision": 0.2,
+      "recall": 0.0098
+    }
+  ],
+  "feature_importances": [
+    {
+      "feature": "Lifetime_Value",
+      "weight": 0.186
+    },
+    {
+      "feature": "Discount_Total",
+      "weight": 0.1458
+    },
+    {
+      "feature": "Delivery_Time_Avg",
+      "weight": 0.1356
+    },
+    {
+      "feature": "Session_Duration_Avg",
+      "weight": 0.1329
+    },
+    {
+      "feature": "Pages_Per_Session",
+      "weight": 0.1298
+    },
+    {
+      "feature": "Quantity_Avg",
+      "weight": 0.1094
+    },
+    {
+      "feature": "Customer_Rating_Avg",
+      "weight": 0.0979
+    },
+    {
+      "feature": "Total_Purchases",
+      "weight": 0.0564
+    },
+    {
+      "feature": "Returned_Ever",
+      "weight": 0.0062
+    },
+    {
+      "feature": "login_frequency",
+      "weight": 0.0
+    },
+    {
+      "feature": "session_duration",
+      "weight": 0.0
+    },
+    {
+      "feature": "purchase_count",
+      "weight": 0.0
+    },
+    {
+      "feature": "avg_order_value",
+      "weight": 0.0
+    },
+    {
+      "feature": "return_rate",
+      "weight": 0.0
+    },
+    {
+      "feature": "discount_sensitivity",
+      "weight": 0.0
+    },
+    {
+      "feature": "email_engagement",
+      "weight": 0.0
+    },
+    {
+      "feature": "app_engagement",
+      "weight": 0.0
+    }
+  ],
+  "feature_names": [
+    "login_frequency",
+    "session_duration",
+    "purchase_count",
+    "avg_order_value",
+    "return_rate",
+    "discount_sensitivity",
+    "email_engagement",
+    "app_engagement",
+    "Lifetime_Value",
+    "Total_Purchases",
+    "Session_Duration_Avg",
+    "Pages_Per_Session",
+    "Customer_Rating_Avg",
+    "Discount_Total",
+    "Delivery_Time_Avg",
+    "Returned_Ever",
+    "Quantity_Avg"
+  ]
+}

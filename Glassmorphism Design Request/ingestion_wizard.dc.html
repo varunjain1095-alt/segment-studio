@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Inter',sans-serif; }
+  input,select,button{font-family:inherit;}
+  a{color:oklch(78% 0.13 210);}
+  a:hover{color:oklch(85% 0.12 210);}
+</style>
+</helmet>
+
+<div style="width:100%;min-height:100vh;background:radial-gradient(1200px 800px at 12% 8%, oklch(48% 0.16 255 / .32), transparent 60%), radial-gradient(1100px 750px at 88% 92%, oklch(72% 0.13 195 / .28), transparent 60%), oklch(15% 0.02 260);color:oklch(96% 0.01 260);display:flex;flex-direction:column;align-items:center;padding:40px 24px 80px;">
+
+  <div style="width:100%;max-width:920px;">
+    <div style="text-align:center;margin-bottom:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;">Data Ingestion Setup</div>
+    <div style="text-align:center;margin-bottom:32px;font-size:13px;color:oklch(68% 0.02 260);">Runs once before the Segmentation Studio dashboard loads</div>
+
+    <div style="display:flex;align-items:center;margin-bottom:36px;">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="6">
+        <div style="display:flex;align-items:center;flex:1;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="{{ s.circleStyle }}">{{ s.circleContent }}</div>
+            <div style="{{ s.labelStyle }}">{{ s.label }}</div>
+          </div>
+          <sc-if value="{{ s.showLine }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ s.lineStyle }}"></div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(24px) saturate(140%);border:1px solid oklch(95% 0.01 260 / .12);border-radius:20px;padding:32px;box-shadow:0 8px 40px oklch(0% 0 0 / .3);min-height:420px;position:relative;">
+
+      <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Step 1 — Choose data source</div>
+        <div style="font-size:13px;color:oklch(68% 0.02 260);margin-bottom:22px;">Select where this dataset is coming from</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;">
+          <div onClick="{{ chooseFile }}" style="{{ fileCardStyle }}">
+            <div style="font-size:14px;font-weight:700;margin-bottom:6px;">File Upload</div>
+            <div style="font-size:12.5px;color:oklch(70% 0.02 260);">CSV / Excel / JSON</div>
+          </div>
+          <div onClick="{{ chooseDb }}" style="{{ dbCardStyle }}">
+            <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Database Connection</div>
+            <div style="font-size:12.5px;color:oklch(70% 0.02 260);">Postgres / Snowflake / BigQuery</div>
+          </div>
+        </div>
+
+        <sc-if value="{{ isFileSource }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ triggerFileBrowse }}" style="border:2px dashed oklch(95% 0.01 260 / .2);border-radius:16px;padding:36px;text-align:center;color:oklch(70% 0.02 260);font-size:13.5px;cursor:pointer;">
+            {{ uploadStatus }}
+            <input type="file" id="wizard-file-input" style="display:none;" onChange="{{ onFileChange }}" />
+          </div>
+        </sc-if>
+        <sc-if value="{{ isDbSource }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <input placeholder="Host" value="{{ dbHost }}" onChange="{{ onDbHostChange }}" style="{{ inputStyle }}"/>
+            <input placeholder="Port" value="{{ dbPort }}" onChange="{{ onDbPortChange }}" style="{{ inputStyle }}"/>
+            <input placeholder="Database name" value="{{ dbName }}" onChange="{{ onDbNameChange }}" style="{{ inputStyle }}"/>
+            <input placeholder="Table / Query" value="{{ dbTable }}" onChange="{{ onDbTableChange }}" style="{{ inputStyle }}"/>
+            <input placeholder="Username" value="{{ dbUser }}" onChange="{{ onDbUserChange }}" style="{{ inputStyle }}"/>
+            <input placeholder="Password" type="password" value="{{ dbPassword }}" onChange="{{ onDbPasswordChange }}" style="{{ inputStyle }}"/>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Step 2 — Confirm columns</div>
+        <div style="font-size:13px;color:oklch(68% 0.02 260);margin-bottom:18px;">Columns with MISS% &gt; 50% are auto-unchecked. Override any checkbox as needed.</div>
+        <div style="border-radius:14px;overflow:hidden;border:1px solid oklch(95% 0.01 260 / .1);">
+          <div style="display:grid;grid-template-columns:50px 1.8fr 1fr 1fr 1.6fr;padding:12px 16px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);background:oklch(38% 0.02 260 / .3);">
+            <div>Use</div><div>Column Name</div><div>Type</div><div>Miss %</div><div></div>
+          </div>
+          <sc-for list="{{ columns }}" as="col" hint-placeholder-count="8">
+            <div style="display:grid;grid-template-columns:50px 1.8fr 1fr 1fr 1.6fr;align-items:center;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);">
+              <input type="checkbox" checked="{{ col.use }}" onChange="{{ col.toggle }}" style="width:16px;height:16px;accent-color:oklch(72% 0.15 222);"/>
+              <div style="font-family:monospace;">{{ col.name }}</div>
+              <div style="color:oklch(70% 0.02 260);">{{ col.type }}</div>
+              <div style="font-weight:700;color:{{ col.missColor }};">{{ col.miss }}%</div>
+              <div style="font-size:11.5px;color:oklch(78% 0.15 80);">{{ col.recommendText }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Step 3 — Imputation per column</div>
+        <div style="font-size:13px;color:oklch(68% 0.02 260);margin-bottom:18px;">Choose a fill method for each column with missing values</div>
+        <div style="border-radius:14px;overflow:hidden;border:1px solid oklch(95% 0.01 260 / .1);margin-bottom:14px;">
+          <div style="display:grid;grid-template-columns:1.8fr 1fr 1.6fr;padding:12px 16px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);background:oklch(38% 0.02 260 / .3);">
+            <div>Column Name</div><div>Miss %</div><div>Method</div>
+          </div>
+          <sc-for list="{{ imputeCols }}" as="col" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:1.8fr 1fr 1.6fr;align-items:center;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);">
+              <div style="font-family:monospace;">{{ col.name }}</div>
+              <div style="font-weight:700;color:{{ col.missColor }};">{{ col.miss }}%</div>
+              <select value="{{ col.method }}" onChange="{{ col.setMethod }}" style="{{ selectStyle }}">
+                <option value="mean">mean</option><option value="median">median</option><option value="mode">mode</option><option value="forward-fill">forward-fill</option><option value="drop">drop</option>
+              </select>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);">only columns with gaps appear</div>
+      </sc-if>
+
+      <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+          <div>
+            <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Step 4 — Approve cross-field rules</div>
+            <div style="font-size:13px;color:oklch(68% 0.02 260);">Review proposed logical constraints between fields</div>
+          </div>
+          <button onClick="{{ approveAll }}" style="{{ ghostBtnStyle }}">Approve all →</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <sc-for list="{{ rules }}" as="rule" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;justify-content:space-between;background:oklch(38% 0.02 260 / .28);border:1px solid oklch(95% 0.01 260 / .1);border-radius:12px;padding:14px 18px;">
+              <div style="font-family:monospace;font-size:13.5px;">{{ rule.expr }}</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <sc-if value="{{ rule.decided }}" hint-placeholder-val="{{ false }}">
+                  <span style="{{ rule.statusStyle }}">{{ rule.statusText }}</span>
+                </sc-if>
+                <span onClick="{{ rule.edit }}" title="Edit rule" style="cursor:pointer;font-size:14px;">✎</span>
+                <span onClick="{{ rule.approve }}" title="Approve" style="cursor:pointer;color:oklch(75% 0.16 150);font-size:17px;font-weight:700;">✓</span>
+                <span onClick="{{ rule.reject }}" title="Reject" style="cursor:pointer;color:oklch(70% 0.18 25);font-size:15px;font-weight:700;">✕</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+          <div>
+            <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Step 5 — Classify demographic fields</div>
+            <div style="font-size:13px;color:oklch(68% 0.02 260);">Confirm each field's proposed classification</div>
+          </div>
+          <span style="font-size:10px;font-weight:700;background:oklch(45% 0.10 300 / .5);color:oklch(88% 0.05 300);padding:4px 9px;border-radius:6px;letter-spacing:.04em;white-space:nowrap;">LLM PROPOSED</span>
+        </div>
+        <div style="border-radius:14px;overflow:hidden;border:1px solid oklch(95% 0.01 260 / .1);">
+          <div style="display:grid;grid-template-columns:1.6fr 1.6fr 100px;padding:12px 16px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);background:oklch(38% 0.02 260 / .3);">
+            <div>Field</div><div>Proposed Classification</div><div>OK</div>
+          </div>
+          <sc-for list="{{ fields }}" as="f" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:1.6fr 1.6fr 100px;align-items:center;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);background:{{ f.rowBg }};">
+              <div style="font-family:monospace;display:flex;align-items:center;gap:8px;">
+                {{ f.name }}
+                <sc-if value="{{ f.unsure }}" hint-placeholder-val="{{ false }}">
+                  <span style="color:oklch(78% 0.15 80);font-weight:700;">?</span>
+                </sc-if>
+              </div>
+              <select value="{{ f.classification }}" onChange="{{ f.setClass }}" style="{{ selectStyle }}">
+                <option value="Demographic">Demographic</option><option value="Behavioral">Behavioral</option><option value="Unsure">Unsure</option>
+              </select>
+              <label style="{{ f.toggleTrack }}" onClick="{{ f.toggleOk }}"><span style="{{ f.toggleKnob }}"></span></label>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStep6 }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Step 6 — Confirm behavioral columns for Layer 8</div>
+        <div style="font-size:13px;color:oklch(68% 0.02 260);margin-bottom:18px;">Toggled-on columns will be monitored for feature-level drift in Layer 8</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+          <sc-for list="{{ behavioralCols }}" as="b" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;justify-content:space-between;background:oklch(38% 0.02 260 / .28);border:1px solid oklch(95% 0.01 260 / .1);border-radius:12px;padding:13px 18px;">
+              <div style="font-family:monospace;font-size:13.5px;">{{ b.name }}</div>
+              <label style="{{ b.toggleTrack }}" onClick="{{ b.toggleOn }}"><span style="{{ b.toggleKnob }}"></span></label>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);">L8 will monitor these columns for early-warning drift signals</div>
+      </sc-if>
+
+      <div style="display:flex;justify-content:space-between;margin-top:30px;">
+        <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goBack }}" style="{{ ghostBtnStyle }}">Back</button></sc-if>
+        <sc-if value="{{ showBack }}" hint-placeholder-val="{{ true }}"><span></span></sc-if>
+        <sc-if value="{{ isLastStep }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ finish }}" style="{{ primaryBtnStyle }}">Finish setup →</button>
+        </sc-if>
+        <sc-if value="{{ isLastStep }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ goNext }}" style="{{ primaryBtnStyle }}">{{ continueLabel }}</button>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    step: 1,
+    source: 'file',
+    datasetId: sessionStorage.getItem('dataset_id') || '',
+    uploadStatus: 'drop file here or browse',
+    dbHost: '', dbPort: '', dbName: '', dbTable: '', dbUser: 'postgres', dbPassword: 'postgres_password',
+    columns: [],
+    imputeMethods: {},
+    rules: [],
+    fields: [],
+    behavioral: [],
+  };
+
+  STEP_LABELS = ['Source', 'Columns', 'Imputation', 'Rules', 'Classify', 'Behavioral'];
+
+  chooseFile = () => this.setState({ source: 'file' });
+  chooseDb = () => this.setState({ source: 'database' });
+  goBack = () => this.setState(s => ({ step: Math.max(1, s.step - 1) }));
+
+  triggerFileBrowse = () => { const el = document.getElementById('wizard-file-input'); if (el) el.click(); };
+
+  onFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    this.setState({ uploadStatus: 'Uploading ' + file.name + '...' });
+    const fd = new FormData();
+    fd.append('file', file);
+    fetch('/api/v1/datasets/ingest', { method: 'POST', body: fd })
+      .then(res => { if (!res.ok) throw new Error('Ingest failed'); return res.json(); })
+      .then(data => {
+        const datasetId = data.dataset_id;
+        this.setState({ datasetId });
+        sessionStorage.setItem('dataset_id', datasetId);
+        this.setState({ uploadStatus: 'Loading profile...' });
+        return fetch('/api/v1/datasets/' + datasetId + '/profile');
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success' || data.profile) {
+          const cols = (data.profile || []).map(col => ({
+            name: col.column_name,
+            type: col.dtype,
+            miss: col.missing_pct,
+            use: col.missing_pct <= 50,
+            recommendText: col.missing_pct > 50 ? 'Recommended: exclude' : '',
+            missColor: this.missColor(col.missing_pct)
+          }));
+          this.setState({ columns: cols, step: 2, uploadStatus: 'drop file here or browse' });
+        } else {
+          throw new Error('Profile generation failed');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        this.setState({ uploadStatus: 'Upload failed: ' + err.message });
+      });
+  };
+
+  goNext = () => {
+    const wizStep = this.state.step;
+    if (wizStep === 1) {
+      if (this.state.source === 'database') {
+        const host = this.state.dbHost || 'localhost';
+        const port = this.state.dbPort || '5435';
+        const dbname = this.state.dbName || 'segment_studio';
+        const table = this.state.dbTable || 'ecommerce_customer_behavior_augmented_T';
+        const user = this.state.dbUser || 'postgres';
+        const password = this.state.dbPassword || 'postgres_password';
+        const connStr = `postgresql://${user}:${password}@${host}:${port}/${dbname}`;
+        
+        this.setState({ uploadStatus: 'Connecting to database...' });
+        fetch('/api/v1/datasets/ingest-db', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ connection_string: connStr, query: `SELECT * FROM ${table}` })
+        })
+          .then(res => { if (!res.ok) throw new Error('DB Ingestion failed'); return res.json(); })
+          .then(data => {
+            const datasetId = data.dataset_id;
+            this.setState({ datasetId });
+            sessionStorage.setItem('dataset_id', datasetId);
+            this.setState({ uploadStatus: 'Loading profile...' });
+            return fetch('/api/v1/datasets/' + datasetId + '/profile');
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success' || data.profile) {
+              const cols = (data.profile || []).map(col => ({
+                name: col.column_name,
+                type: col.dtype,
+                miss: col.missing_pct,
+                use: col.missing_pct <= 50,
+                recommendText: col.missing_pct > 50 ? 'Recommended: exclude' : '',
+                missColor: this.missColor(col.missing_pct)
+              }));
+              this.setState({ columns: cols, step: 2, uploadStatus: 'drop file here or browse' });
+            } else {
+              throw new Error('Profile generation failed');
+            }
+          })
+          .catch(err => {
+            alert('Database ingestion failed: ' + err.message);
+            this.setState({ uploadStatus: 'Database ingestion failed: ' + err.message });
+          });
+      } else {
+        if (!this.state.datasetId) {
+          alert('Please upload a file first.');
+          return;
+        }
+        this.setState({ step: 2 });
+      }
+    } else if (wizStep === 2) {
+      fetch('/api/v1/datasets/' + this.state.datasetId + '/confirm-columns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ columns: this.state.columns.map(c => ({ column_name: c.name, include: c.use })) })
+      })
+        .then(res => { if (!res.ok) throw new Error('Failed to confirm columns'); return res.json(); })
+        .then(() => {
+          const imputeCols = this.state.columns.filter(c => c.use && c.miss > 0);
+          const imputeMethods = {};
+          imputeCols.forEach(col => { imputeMethods[col.name] = 'mean'; });
+          this.setState({ imputeMethods, step: 3 });
+        })
+        .catch(err => alert(err.message));
+    } else if (wizStep === 3) {
+      fetch('/api/v1/datasets/' + this.state.datasetId + '/cross-field-rules')
+        .then(res => { if (!res.ok) throw new Error('Failed to load rules'); return res.json(); })
+        .then(data => {
+          const rules = (data.rules || []).map(r => ({
+            id: r.rule_id,
+            expr: r.rule_expression,
+            status: r.approved === true ? 'approved' : r.approved === false ? 'rejected' : null
+          }));
+          this.setState({ rules, step: 4 });
+        })
+        .catch(err => alert(err.message));
+    } else if (wizStep === 4) {
+      fetch('/api/v1/datasets/' + this.state.datasetId + '/field-classifications')
+        .then(res => { if (!res.ok) throw new Error('Failed to load classifications'); return res.json(); })
+        .then(data => {
+          const fields = (data.classifications || []).map(f => ({
+            name: f.column,
+            classification: f.classification,
+            unsure: f.unsure,
+            ok: true
+          }));
+          this.setState({ fields, step: 5 });
+        })
+        .catch(err => alert(err.message));
+    } else if (wizStep === 5) {
+      fetch('/api/v1/datasets/' + this.state.datasetId + '/field-classifications/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ classifications: this.state.fields.map(f => ({ column: f.name, classification: f.classification })) })
+      })
+        .then(res => { if (!res.ok) throw new Error('Failed to confirm classifications'); return res.json(); })
+        .then(() => {
+          const behavioralCols = this.state.fields
+            .filter(f => f.classification === 'Behavioral')
+            .map(f => ({ name: f.name, on: true }));
+          this.setState({ behavioral: behavioralCols, step: 6 });
+        })
+        .catch(err => alert(err.message));
+    } else {
+      this.setState(s => ({ step: Math.min(6, s.step + 1) }));
+    }
+  };
+
+  finish = () => {
+    this.setState({ uploadStatus: 'Running Layer 0 pipeline...' });
+    fetch('/api/v1/datasets/' + this.state.datasetId + '/layer8-columns/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ columns: this.state.behavioral.map(b => ({ column_name: b.name, include: b.on })) })
+    })
+      .then(res => { if (!res.ok) throw new Error('Failed to confirm layer 8 columns'); return fetch('/api/v1/datasets/' + this.state.datasetId + '/run-layer0', { method: 'POST' }); })
+      .then(res => { if (!res.ok) throw new Error('Layer 0 run failed'); return res.json(); })
+      .then(() => {
+        window.location.href = './Setup%20Wizard.dc.html?tab=L1';
+      })
+      .catch(err => {
+        alert('Setup failed: ' + err.message);
+        this.setState({ uploadStatus: 'Setup failed: ' + err.message });
+      });
+  };
+
+  approveAll = () => {
+    this.setState(s => ({ rules: s.rules.map(r => ({ ...r, status: 'approved' })) }));
+    fetch('/api/v1/datasets/' + this.state.datasetId + '/cross-field-rules/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rules: this.state.rules.map(r => ({ rule_id: r.id, approved: true })) })
+    });
+  };
+
+  missColor(miss) {
+    if (miss > 50) return 'oklch(70% 0.18 25)';
+    if (miss > 10) return 'oklch(78% 0.15 80)';
+    return 'oklch(80% 0.01 260)';
+  }
+
+  renderVals() {
+    const step = this.state.step;
+    const steps = this.STEP_LABELS.map((label, i) => {
+      const n = i + 1;
+      const done = n < step, active = n === step;
+      return {
+        label,
+        showLine: n < 6,
+        circleContent: done ? '✓' : String(n),
+        circleStyle: `width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:${active ? 'linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195))' : done ? 'oklch(72% 0.15 222 / .35)' : 'oklch(40% 0.02 260 / .4)'};color:${active ? 'oklch(12% 0.02 260)' : done ? 'oklch(90% 0.05 222)' : 'oklch(65% 0.02 260)'};border:1px solid ${active || done ? 'transparent' : 'oklch(95% 0.01 260 / .15)'};`,
+        labelStyle: `font-size:10.5px;color:${active ? 'oklch(92% 0.01 260)' : 'oklch(62% 0.02 260)'};font-weight:${active ? 700 : 500};white-space:nowrap;`,
+        lineStyle: `height:1px;flex:1;background:${done ? 'oklch(72% 0.15 222 / .5)' : 'oklch(95% 0.01 260 / .12)'};margin:0 4px;`,
+      };
+    });
+
+    const columns = this.state.columns.map(col => ({
+      ...col, miss: col.miss, missColor: this.missColor(col.miss),
+      recommendText: col.miss > 50 ? 'Recommended: exclude' : '',
+      toggle: () => this.setState(s => ({ columns: s.columns.map(c => c.name === col.name ? { ...c, use: !c.use } : c) })),
+    }));
+
+    const imputeCols = this.state.columns.filter(c => c.miss > 0).map(col => ({
+      name: col.name, miss: col.miss, missColor: this.missColor(col.miss),
+      method: this.state.imputeMethods[col.name],
+      setMethod: (e) => this.setState(s => ({ imputeMethods: { ...s.imputeMethods, [col.name]: e.target.value } })),
+    }));
+
+    const setRuleStatus = (id, status) => this.setState(s => ({ rules: s.rules.map(r => r.id === id ? { ...r, status } : r) }));
+    const rules = this.state.rules.map(r => ({
+      ...r, decided: !!r.status,
+      statusText: r.status === 'approved' ? 'Approved' : r.status === 'rejected' ? 'Rejected' : '',
+      statusStyle: `font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:${r.status === 'approved' ? 'oklch(55% 0.15 150 / .3)' : 'oklch(70% 0.18 25 / .3)'};color:${r.status === 'approved' ? 'oklch(80% 0.15 150)' : 'oklch(85% 0.12 25)'};`,
+      approve: () => setRuleStatus(r.id, 'approved'),
+      reject: () => setRuleStatus(r.id, 'rejected'),
+      edit: () => {},
+    }));
+
+    const toggleTrack = (on) => `display:inline-flex;align-items:center;width:38px;height:22px;border-radius:11px;padding:2px;cursor:pointer;background:${on ? 'oklch(72% 0.15 222 / .6)' : 'oklch(45% 0.02 260 / .5)'};transition:background .15s;`;
+    const toggleKnob = (on) => `width:18px;height:18px;border-radius:50%;background:oklch(97% 0.01 260);transform:translateX(${on ? '16px' : '0'});transition:transform .15s;display:block;`;
+
+    const fields = this.state.fields.map(f => ({
+      ...f,
+      rowBg: f.unsure ? 'oklch(78% 0.15 80 / .08)' : 'transparent',
+      setClass: (e) => this.setState(s => ({ fields: s.fields.map(x => x.name === f.name ? { ...x, classification: e.target.value, unsure: e.target.value === 'Unsure' } : x) })),
+      toggleOk: () => this.setState(s => ({ fields: s.fields.map(x => x.name === f.name ? { ...x, ok: !x.ok } : x) })),
+      toggleTrack: toggleTrack(f.ok), toggleKnob: toggleKnob(f.ok),
+    }));
+
+    const behavioralCols = this.state.behavioral.map(b => ({
+      ...b,
+      toggleOn: () => this.setState(s => ({ behavioral: s.behavioral.map(x => x.name === b.name ? { ...x, on: !x.on } : x) })),
+      toggleTrack: toggleTrack(b.on), toggleKnob: toggleKnob(b.on),
+    }));
+
+    const inputStyle = 'background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);border-radius:10px;padding:11px 14px;color:oklch(94% 0.01 260);font-size:13px;outline:none;';
+    const selectStyle = 'background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);border-radius:8px;padding:8px 10px;color:oklch(92% 0.01 260);font-size:12.5px;';
+    const ghostBtnStyle = 'padding:11px 20px;border-radius:10px;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(92% 0.01 260);font-size:13.5px;font-weight:600;cursor:pointer;';
+    const primaryBtnStyle = 'padding:11px 22px;border-radius:10px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));border:none;color:oklch(12% 0.02 260);font-size:13.5px;font-weight:700;cursor:pointer;';
+
+    return {
+      steps, isStep1: step === 1, isStep2: step === 2, isStep3: step === 3, isStep4: step === 4, isStep5: step === 5, isStep6: step === 6,
+      isFileSource: this.state.source === 'file', isDbSource: this.state.source === 'database',
+      fileCardStyle: `padding:20px;border-radius:14px;cursor:pointer;background:${this.state.source === 'file' ? 'oklch(72% 0.15 222 / .18)' : 'oklch(38% 0.02 260 / .25)'};border:1px solid ${this.state.source === 'file' ? 'oklch(72% 0.15 222 / .5)' : 'oklch(95% 0.01 260 / .1)'};`,
+      dbCardStyle: `padding:20px;border-radius:14px;cursor:pointer;background:${this.state.source === 'database' ? 'oklch(72% 0.15 222 / .18)' : 'oklch(38% 0.02 260 / .25)'};border:1px solid ${this.state.source === 'database' ? 'oklch(72% 0.15 222 / .5)' : 'oklch(95% 0.01 260 / .1)'};`,
+      columns, imputeCols, rules, fields, behavioralCols,
+      inputStyle, selectStyle, ghostBtnStyle, primaryBtnStyle,
+      showBack: step > 1, isLastStep: step === 6, continueLabel: 'Continue →',
+      goBack: this.goBack, goNext: this.goNext, finish: this.finish, chooseFile: this.chooseFile, chooseDb: this.chooseDb, approveAll: this.approveAll,
+      uploadStatus: this.state.uploadStatus,
+      dbHost: this.state.dbHost,
+      dbPort: this.state.dbPort,
+      dbName: this.state.dbName,
+      dbTable: this.state.dbTable,
+      dbUser: this.state.dbUser,
+      dbPassword: this.state.dbPassword,
+      onDbHostChange: (e) => this.setState({ dbHost: e.target.value }),
+      onDbPortChange: (e) => this.setState({ dbPort: e.target.value }),
+      onDbNameChange: (e) => this.setState({ dbName: e.target.value }),
+      onDbTableChange: (e) => this.setState({ dbTable: e.target.value }),
+      onDbUserChange: (e) => this.setState({ dbUser: e.target.value }),
+      onDbPasswordChange: (e) => this.setState({ dbPassword: e.target.value }),
+      triggerFileBrowse: this.triggerFileBrowse,
+      onFileChange: this.onFileChange,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

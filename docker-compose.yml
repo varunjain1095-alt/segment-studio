@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: segment-studio-db
+    environment:
+      POSTGRES_DB: segment_studio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5435:5432"
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: segment-studio-app
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres_password@db:5432/segment_studio
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER}
+      - LLM_MODEL=${LLM_MODEL}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - db
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  pgdata:
+    driver: local

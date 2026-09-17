@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Inter',sans-serif; }
+  input,select,button{font-family:inherit;}
+</style>
+</helmet>
+
+<div style="width:100%;min-height:100vh;background:radial-gradient(1200px 800px at 12% 8%, oklch(48% 0.16 255 / .32), transparent 60%), radial-gradient(1100px 750px at 88% 92%, oklch(72% 0.13 195 / .28), transparent 60%), oklch(15% 0.02 260);color:oklch(96% 0.01 260);padding:30px 24px 80px;display:flex;flex-direction:column;align-items:center;">
+
+  <div style="width:100%;max-width:980px;background:oklch(28% 0.02 260 / .4);backdrop-filter:blur(26px) saturate(140%);border:1px solid oklch(95% 0.01 260 / .12);border-radius:22px;box-shadow:0 20px 70px oklch(0% 0 0 / .4);overflow:hidden;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid oklch(95% 0.01 260 / .1);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="width:9px;height:9px;border-radius:50%;background:oklch(70% 0.18 25 / .6);"></span>
+        <span style="width:9px;height:9px;border-radius:50%;background:oklch(78% 0.15 80 / .6);"></span>
+        <span style="width:9px;height:9px;border-radius:50%;background:oklch(75% 0.16 150 / .6);"></span>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;margin-left:8px;">Welcome to Build Custom Segments</div>
+      </div>
+      <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px;position:relative;">
+          <button style="{{ ghostBtnStyle }}">Save Segment</button>
+          <button onClick="{{ toggleSchedule }}" style="{{ primaryBtnStyle }}">Schedule</button>
+          <sc-if value="{{ scheduleOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:calc(100% + 8px);right:0;width:220px;background:oklch(24% 0.02 260 / .95);backdrop-filter:blur(24px);border:1px solid oklch(95% 0.01 260 / .16);border-radius:12px;padding:14px;z-index:10;box-shadow:0 20px 50px oklch(0% 0 0 / .5);">
+              <div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);margin-bottom:8px;">Granularity</div>
+              <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <button onClick="{{ setGranMonthly }}" style="{{ granMonthlyStyle }}">Monthly</button>
+                <button onClick="{{ setGranCustom }}" style="{{ granCustomStyle }}">Custom</button>
+              </div>
+              <button style="{{ primaryBtnStyle }};width:100%;">Save Schedule</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="padding:26px 30px 34px;">
+
+      <sc-if value="{{ isDefine }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:16px;font-weight:600;margin-bottom:2px;">Step 1 — Define Segments</div>
+        <div style="font-size:13px;color:oklch(68% 0.02 260);margin-bottom:20px;">Build one or more segments from column-level conditions</div>
+
+        <sc-for list="{{ segments }}" as="seg" hint-placeholder-count="2">
+          <div style="background:oklch(38% 0.02 260 / .28);border:1px solid oklch(95% 0.01 260 / .1);border-radius:16px;padding:18px 20px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:{{ seg.headerMargin }};">
+              <span onClick="{{ seg.toggleExpand }}" style="cursor:pointer;font-size:12px;color:oklch(70% 0.02 260);">{{ seg.chevron }}</span>
+              <input value="{{ seg.name }}" onChange="{{ seg.setName }}" placeholder="Segment name" style="flex:1;background:oklch(40% 0.02 260 / .4);border:1px solid oklch(95% 0.01 260 / .14);border-radius:9px;padding:9px 12px;color:oklch(94% 0.01 260);font-size:14px;font-weight:600;outline:none;max-width:320px;"/>
+            </div>
+
+            <sc-if value="{{ seg.expanded }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <sc-for list="{{ seg.columns }}" as="col" hint-placeholder-count="3">
+                  <div style="background:oklch(34% 0.02 260 / .3);border-radius:12px;padding:14px 16px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                      <div style="font-family:monospace;font-size:13px;color:oklch(88% 0.01 260);">{{ col.name }} <span style="color:oklch(60% 0.02 260);font-family:'Inter',sans-serif;">({{ col.type }})</span></div>
+                      <span onClick="{{ col.remove }}" style="cursor:pointer;font-size:13px;color:oklch(70% 0.18 25);font-weight:700;">Remove ×</span>
+                    </div>
+
+                    <sc-if value="{{ col.isNumeric }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button onClick="{{ col.setBottom }}" style="{{ col.bottomStyle }}">Bottom 25%</button>
+                        <button onClick="{{ col.setMiddle }}" style="{{ col.middleStyle }}">Middle 50%</button>
+                        <button onClick="{{ col.setTop }}" style="{{ col.topStyle }}">Top 25%</button>
+                        <button onClick="{{ col.setCustom }}" style="{{ col.customStyle }}">Add Custom Range</button>
+                      </div>
+                      <sc-if value="{{ col.showRange }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+                          <span style="font-size:11px;color:oklch(65% 0.02 260);">Min</span>
+                          <input type="number" value="{{ col.min }}" onChange="{{ col.setMin }}" style="width:90px;background:oklch(40% 0.02 260 / .4);border:1px solid oklch(95% 0.01 260 / .14);border-radius:8px;padding:6px 10px;color:oklch(94% 0.01 260);font-size:12.5px;"/>
+                          <div style="flex:1;height:4px;border-radius:2px;background:linear-gradient(90deg, oklch(95% 0.01 260 / .15), oklch(72% 0.15 222 / .6), oklch(95% 0.01 260 / .15));"></div>
+                          <span style="font-size:11px;color:oklch(65% 0.02 260);">Max</span>
+                          <input type="number" value="{{ col.max }}" onChange="{{ col.setMax }}" style="width:90px;background:oklch(40% 0.02 260 / .4);border:1px solid oklch(95% 0.01 260 / .14);border-radius:8px;padding:6px 10px;color:oklch(94% 0.01 260);font-size:12.5px;"/>
+                        </div>
+                      </sc-if>
+                    </sc-if>
+
+                    <sc-if value="{{ col.isCategorical }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+                        <sc-for list="{{ col.values }}" as="v" hint-placeholder-count="3">
+                          <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:oklch(85% 0.01 260);cursor:pointer;">
+                            <input type="checkbox" checked="{{ v.checked }}" onChange="{{ v.toggle }}" style="width:14px;height:14px;accent-color:oklch(72% 0.15 222);"/>{{ v.name }}
+                          </label>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+                <button onClick="{{ seg.addColumn }}" style="{{ dashedBtnStyle }}">+ Add Column</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+
+        <button onClick="{{ addSegment }}" style="{{ dashedBtnStyle }};margin-bottom:16px;">(+) Add Segment</button>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);margin-bottom:24px;">Customers can belong to multiple segments</div>
+
+        <div style="display:flex;justify-content:space-between;">
+          <button style="{{ ghostBtnStyle }}">Back</button>
+          <button onClick="{{ goOptions }}" style="{{ primaryBtnStyle }}">Continue</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOptions }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:16px;font-weight:600;margin-bottom:2px;">Step 2 — Select Comparison Options</div>
+        <div style="font-size:13px;color:oklch(68% 0.02 260);margin-bottom:20px;">Choose which analyses to run against the defined segments</div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+          <sc-for list="{{ options }}" as="opt" hint-placeholder-count="7">
+            <sc-if value="{{ opt.visible }}" hint-placeholder-val="{{ true }}">
+              <div style="background:oklch(38% 0.02 260 / .28);border:1px solid oklch(95% 0.01 260 / .1);border-radius:14px;padding:16px 18px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:{{ opt.bodyMargin }};">
+                  <div>
+                    <div style="font-size:14px;font-weight:600;">{{ opt.title }}</div>
+                    <sc-if value="{{ opt.note }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:oklch(65% 0.02 260);margin-top:2px;">{{ opt.note }}</div></sc-if>
+                  </div>
+                  <label style="{{ opt.toggleTrack }}" onClick="{{ opt.toggle }}"><span style="{{ opt.toggleKnob }}"></span></label>
+                </div>
+                <sc-if value="{{ opt.enabled }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+                    <sc-for list="{{ opt.selectors }}" as="sel" hint-placeholder-count="2">
+                      <select style="{{ selectStyle }}"><option>{{ sel }}</option></select>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;gap:10px;">
+                    <button style="{{ ghostBtnStyle }}">Download PDF</button>
+                    <button style="{{ primaryBtnStyle }}">Email Report</button>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;">
+          <button onClick="{{ backToDefine }}" style="{{ ghostBtnStyle }}">Back</button>
+          <button onClick="{{ runAnalysis }}" style="{{ primaryBtnStyle }}">Run Analysis</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:16px;font-weight:600;margin-bottom:16px;">Results — Option 1: Compare with Baseline Segments</div>
+        <div style="background:oklch(38% 0.02 260 / .28);border:1px solid oklch(95% 0.01 260 / .1);border-radius:14px;padding:20px;">
+          <div style="border-radius:12px;overflow:hidden;border:1px solid oklch(95% 0.01 260 / .1);margin-bottom:16px;">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:12px 16px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);background:oklch(34% 0.02 260 / .3);">
+              <div>Segment</div><div>Size</div><div>Churn</div><div>Rev/U</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);"><div style="font-weight:700;color:oklch(85% 0.10 222);">High Value Dormant (custom)</div><div>2,140</div><div>29.4%</div><div>$134</div></div>
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);"><div style="font-weight:700;color:oklch(85% 0.10 222);">New Adopters at Risk (custom)</div><div>1,586</div><div>18.2%</div><div>$88</div></div>
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .1);background:oklch(45% 0.02 260 / .2);"><div style="font-weight:600;">Power Users (K-means baseline)</div><div>18,204</div><div>4.2%</div><div>$182</div></div>
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);background:oklch(45% 0.02 260 / .2);"><div style="font-weight:600;">Dormant (K-means baseline)</div><div>9,442</div><div>38.7%</div><div>$12</div></div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button style="{{ ghostBtnStyle }}">Download PDF</button>
+            <button style="{{ primaryBtnStyle }}">Email Report</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    view: 'define',
+    scheduleOpen: false,
+    granularity: 'Monthly',
+    segments: [
+      {
+        id: 's1', name: 'High Value Dormant', expanded: true,
+        columns: [
+          { id: 'c1', name: 'lifetime_value', type: 'numeric', selection: 'top25', min: '', max: '' },
+          { id: 'c2', name: 'days_since_last_purchase', type: 'numeric', selection: 'custom', min: '90', max: '365' },
+          { id: 'c3', name: 'city', type: 'categorical', values: [
+            { name: 'Istanbul', checked: true }, { name: 'Ankara', checked: true }, { name: 'Izmir', checked: false }, { name: 'Bursa', checked: false },
+          ] },
+        ],
+      },
+      {
+        id: 's2', name: 'New Adopters at Risk', expanded: false,
+        columns: [
+          { id: 'c4', name: 'signup_days_ago', type: 'numeric', selection: 'bottom25', min: '', max: '' },
+          { id: 'c5', name: 'purchase_frequency', type: 'numeric', selection: 'bottom25', min: '', max: '' },
+        ],
+      },
+    ],
+    options: [
+      { id: 'o1', title: 'Compare with Baseline Segments', note: null, enabled: true, selectors: ['Time period: This Quarter', 'Columns: All'] },
+      { id: 'o2', title: 'How Aggregates Changed (T → T+1)', note: null, enabled: false, selectors: ['Columns: All'] },
+      { id: 'o3', title: 'Compare Custom Segments', note: null, enabled: false, selectors: ['Columns: All'] },
+      { id: 'o4', title: 'L3 Statistical Testing', note: 'requires 2+ segments', enabled: false, selectors: ['Time period: This Quarter'] },
+      { id: 'o5', title: 'L6 Outcome Analysis', note: null, enabled: false, selectors: ['Time period: This Quarter'] },
+      { id: 'o6', title: 'L7 Metric Integration', note: null, enabled: false, selectors: ['Granularity: Monthly', 'Metric: Retention Rate', 'Time period: This Quarter'] },
+      { id: 'o7', title: 'L8 Feature Signal', note: null, enabled: false, selectors: ['Time period: This Quarter'] },
+    ],
+  };
+
+  goOptions = () => this.setState({ view: 'options' });
+  backToDefine = () => this.setState({ view: 'define' });
+  runAnalysis = () => this.setState({ view: 'results' });
+  toggleSchedule = () => this.setState(s => ({ scheduleOpen: !s.scheduleOpen }));
+  setGranMonthly = () => this.setState({ granularity: 'Monthly' });
+  setGranCustom = () => this.setState({ granularity: 'Custom' });
+  addSegment = () => this.setState(s => ({ segments: [...s.segments, { id: 's' + Date.now(), name: 'New Segment', expanded: true, columns: [] }] }));
+
+  updateSeg(segId, fn) {
+    this.setState(s => ({ segments: s.segments.map(seg => seg.id === segId ? fn(seg) : seg) }));
+  }
+  updateCol(segId, colId, fn) {
+    this.updateSeg(segId, seg => ({ ...seg, columns: seg.columns.map(c => c.id === colId ? fn(c) : c) }));
+  }
+
+  numBtnStyle(active) {
+    return `padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:${active ? 'oklch(72% 0.15 222 / .3)' : 'oklch(40% 0.02 260 / .3)'};border:1px solid ${active ? 'oklch(72% 0.15 222 / .5)' : 'oklch(95% 0.01 260 / .12)'};color:${active ? 'oklch(90% 0.05 222)' : 'oklch(85% 0.01 260)'};`;
+  }
+  toggleTrack(on) { return `display:inline-flex;align-items:center;width:38px;height:22px;border-radius:11px;padding:2px;cursor:pointer;background:${on ? 'oklch(72% 0.15 222 / .6)' : 'oklch(45% 0.02 260 / .5)'};flex-shrink:0;`; }
+  toggleKnob(on) { return `width:18px;height:18px;border-radius:50%;background:oklch(97% 0.01 260);transform:translateX(${on ? '16px' : '0'});transition:transform .15s;display:block;`; }
+
+  renderVals() {
+    const segCount = this.state.segments.length;
+    const segments = this.state.segments.map(seg => ({
+      id: seg.id, name: seg.name, expanded: seg.expanded,
+      chevron: seg.expanded ? '▾' : '▸',
+      headerMargin: seg.expanded ? '16px' : '0',
+      toggleExpand: () => this.updateSeg(seg.id, s => ({ ...s, expanded: !s.expanded })),
+      setName: (e) => this.updateSeg(seg.id, s => ({ ...s, name: e.target.value })),
+      addColumn: () => this.updateSeg(seg.id, s => ({ ...s, columns: [...s.columns, { id: 'c' + Date.now(), name: 'new_column', type: 'numeric', selection: 'top25', min: '', max: '' }] })),
+      columns: seg.columns.map(col => {
+        const isNumeric = col.type === 'numeric';
+        return {
+          id: col.id, name: col.name, type: col.type, isNumeric, isCategorical: !isNumeric,
+          showRange: col.selection === 'custom', min: col.min, max: col.max,
+          bottomStyle: this.numBtnStyle(col.selection === 'bottom25'), middleStyle: this.numBtnStyle(col.selection === 'middle50'),
+          topStyle: this.numBtnStyle(col.selection === 'top25'), customStyle: this.numBtnStyle(col.selection === 'custom'),
+          setBottom: () => this.updateCol(seg.id, col.id, c => ({ ...c, selection: 'bottom25' })),
+          setMiddle: () => this.updateCol(seg.id, col.id, c => ({ ...c, selection: 'middle50' })),
+          setTop: () => this.updateCol(seg.id, col.id, c => ({ ...c, selection: 'top25' })),
+          setCustom: () => this.updateCol(seg.id, col.id, c => ({ ...c, selection: 'custom' })),
+          setMin: (e) => this.updateCol(seg.id, col.id, c => ({ ...c, min: e.target.value })),
+          setMax: (e) => this.updateCol(seg.id, col.id, c => ({ ...c, max: e.target.value })),
+          remove: () => this.updateSeg(seg.id, s => ({ ...s, columns: s.columns.filter(c => c.id !== col.id) })),
+          values: (col.values || []).map(v => ({
+            name: v.name, checked: v.checked,
+            toggle: () => this.updateCol(seg.id, col.id, c => ({ ...c, values: c.values.map(x => x.name === v.name ? { ...x, checked: !x.checked } : x) })),
+          })),
+        };
+      }),
+    }));
+
+    const options = this.state.options.map(opt => {
+      const visible = opt.id !== 'o3' || segCount >= 2;
+      const note = opt.id === 'o3' ? `Available: ${segCount} segments defined` : opt.note;
+      return {
+        id: opt.id, title: opt.title, note, visible, enabled: opt.enabled,
+        bodyMargin: opt.enabled ? '14px' : '0',
+        selectors: opt.selectors,
+        toggle: () => this.setState(s => ({ options: s.options.map(o => o.id === opt.id ? { ...o, enabled: !o.enabled } : o) })),
+        toggleTrack: this.toggleTrack(opt.enabled), toggleKnob: this.toggleKnob(opt.enabled),
+      };
+    });
+
+    const ghostBtnStyle = 'padding:10px 18px;border-radius:10px;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(92% 0.01 260);font-size:13px;font-weight:600;cursor:pointer;';
+    const primaryBtnStyle = 'padding:10px 18px;border-radius:10px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));border:none;color:oklch(12% 0.02 260);font-size:13px;font-weight:700;cursor:pointer;';
+    const dashedBtnStyle = 'padding:11px 16px;border-radius:10px;background:transparent;border:1.5px dashed oklch(95% 0.01 260 / .25);color:oklch(78% 0.13 195);font-size:13px;font-weight:600;cursor:pointer;width:fit-content;';
+    const selectStyle = 'background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);border-radius:8px;padding:8px 10px;color:oklch(88% 0.01 260);font-size:12px;';
+
+    return {
+      isDefine: this.state.view === 'define', isOptions: this.state.view === 'options', isResults: this.state.view === 'results',
+      segments, options, scheduleOpen: this.state.scheduleOpen,
+      granMonthlyStyle: this.numBtnStyle(this.state.granularity === 'Monthly'), granCustomStyle: this.numBtnStyle(this.state.granularity === 'Custom'),
+      ghostBtnStyle, primaryBtnStyle, dashedBtnStyle, selectStyle,
+      addSegment: this.addSegment, goOptions: this.goOptions, backToDefine: this.backToDefine, runAnalysis: this.runAnalysis,
+      toggleSchedule: this.toggleSchedule, setGranMonthly: this.setGranMonthly, setGranCustom: this.setGranCustom,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

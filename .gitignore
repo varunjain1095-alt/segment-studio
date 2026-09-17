@@ -1,0 +1,22 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment and secrets
+.env
+.env.local
+
+# Large datasets & diagnostics
+*.csv
+diagnostics_output*.txt
+
+# Docker & OS
+.DS_Store
+Thumbs.db

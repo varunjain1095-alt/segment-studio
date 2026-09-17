@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Inter',sans-serif; }
+  input,select,button{font-family:inherit;}
+  a{color:oklch(78% 0.13 210);}
+</style>
+</helmet>
+
+<div style="width:100%;min-height:100vh;background:radial-gradient(1200px 800px at 12% 8%, oklch(48% 0.16 255 / .32), transparent 60%), radial-gradient(1100px 750px at 88% 92%, oklch(72% 0.13 195 / .28), transparent 60%), oklch(15% 0.02 260);color:oklch(96% 0.01 260);padding:36px 24px 80px;display:flex;flex-direction:column;align-items:center;">
+
+  <div style="width:100%;max-width:880px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;">Saved Custom Segments</div>
+        <div style="font-size:13px;color:oklch(68% 0.02 260);margin-top:4px;">Manage, re-run, and schedule your custom segment definitions</div>
+      </div>
+      <a href="create_custom_segments.html" style="padding:10px 18px;border-radius:10px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));color:oklch(12% 0.02 260);font-size:13px;font-weight:700;">+ Build New Segment</a>
+    </div>
+
+    <sc-if value="{{ hasSegments }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <sc-for list="{{ segments }}" as="seg" hint-placeholder-count="4">
+          <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:16px;padding:20px 22px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+              <div>
+                <div style="font-size:15px;font-weight:700;margin-bottom:4px;">{{ seg.name }}</div>
+                <div style="font-size:12.5px;color:oklch(75% 0.02 260);">{{ seg.conditions }}</div>
+              </div>
+              <span style="font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;background:{{ seg.scheduleBg }};color:{{ seg.scheduleFg }};white-space:nowrap;">{{ seg.scheduleBadge }}</span>
+            </div>
+            <div style="display:flex;gap:24px;margin-bottom:16px;font-size:12px;color:oklch(65% 0.02 260);">
+              <div>Last run: <span style="color:oklch(85% 0.01 260);">{{ seg.lastRun }}</span></div>
+              <sc-if value="{{ seg.hasNextRun }}" hint-placeholder-val="{{ false }}">
+                <div>Next scheduled run: <span style="color:oklch(85% 0.01 260);">{{ seg.nextRun }}</span></div>
+              </sc-if>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button style="{{ ghostBtnStyle }}">Re-run</button>
+              <button style="{{ ghostBtnStyle }}">Edit</button>
+              <button onClick="{{ seg.delete }}" style="{{ dangerBtnStyle }}">Delete</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasSegments }}" hint-placeholder-val="{{ false }}">
+      <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:60px 30px;text-align:center;">
+        <div style="font-size:14.5px;color:oklch(75% 0.02 260);">No saved segments yet. <a href="create_custom_segments.html">Build your first segment →</a></div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    segments: [
+      { id: 1, name: 'High Value Dormant', conditions: 'Lifetime value: Top 25% + Days since last purchase: 90–365 + City: Istanbul, Ankara', lastRun: '2026-07-08 14:22', nextRun: '2026-08-01 06:00', scheduled: true },
+      { id: 2, name: 'New Adopters at Risk', conditions: 'Signup days ago: Bottom 25% + Purchase frequency: Bottom 25%', lastRun: '2026-07-11 09:05', nextRun: null, scheduled: false },
+      { id: 3, name: 'Deal Seekers — Istanbul', conditions: 'Discount usage rate: Top 25% + City: Istanbul', lastRun: '2026-06-30 11:47', nextRun: '2026-07-30 06:00', scheduled: true },
+    ],
+  };
+
+  renderVals() {
+    const segments = this.state.segments.map(s => ({
+      name: s.name, conditions: s.conditions, lastRun: s.lastRun,
+      hasNextRun: !!s.nextRun, nextRun: s.nextRun,
+      scheduleBadge: s.scheduled ? 'Monthly' : 'Not scheduled',
+      scheduleBg: s.scheduled ? 'oklch(72% 0.15 222 / .25)' : 'oklch(45% 0.02 260 / .35)',
+      scheduleFg: s.scheduled ? 'oklch(85% 0.10 222)' : 'oklch(70% 0.02 260)',
+      delete: () => this.setState(st => ({ segments: st.segments.filter(x => x.id !== s.id) })),
+    }));
+
+    const ghostBtnStyle = 'padding:9px 16px;border-radius:9px;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(92% 0.01 260);font-size:12.5px;font-weight:600;cursor:pointer;';
+    const dangerBtnStyle = 'padding:9px 16px;border-radius:9px;background:oklch(70% 0.18 25 / .15);border:1px solid oklch(70% 0.18 25 / .35);color:oklch(85% 0.12 25);font-size:12.5px;font-weight:600;cursor:pointer;';
+
+    return { segments, hasSegments: segments.length > 0, ghostBtnStyle, dangerBtnStyle };
+  }
+}
+
+</script>
+</body>
+</html>

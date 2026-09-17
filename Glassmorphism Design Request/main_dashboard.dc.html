@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/static/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Inter',sans-serif; }
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:oklch(60% 0.02 260 / .35);border-radius:8px;}
+  input,select,button{font-family:inherit;}
+  a{color:oklch(78% 0.13 210);text-decoration:none;}
+  a:hover{color:oklch(85% 0.12 210);}
+</style>
+</helmet>
+
+<div style="position:relative;width:100%;height:100vh;overflow:hidden;background:radial-gradient(1200px 800px at 12% 8%, oklch(48% 0.16 255 / .32), transparent 60%), radial-gradient(1100px 750px at 88% 92%, oklch(72% 0.13 195 / .28), transparent 60%), radial-gradient(900px 600px at 90% 10%, oklch(55% 0.15 300 / .12), transparent 55%), oklch(15% 0.02 260);color:oklch(96% 0.01 260);display:flex;">
+
+  <div style="width:248px;flex-shrink:0;height:100vh;background:oklch(30% 0.02 260 / .30);backdrop-filter:blur(24px) saturate(140%);border-right:1px solid oklch(95% 0.01 260 / .10);display:flex;flex-direction:column;padding:22px 16px;gap:22px;overflow-y:auto;">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 6px;">
+      <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));flex-shrink:0;"></div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;letter-spacing:.2px;">Segmentation Studio</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-size:11px;letter-spacing:.08em;color:oklch(65% 0.02 260);padding:6px 10px;text-transform:uppercase;">Layers</div>
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="10">
+        <div onClick="{{ selectNav }}" data-nav-id="{{ item.id }}" style="{{ item.rowStyle }}">
+          <span style="{{ item.dotStyle }}"></span>
+          <span style="{{ item.labelStyle }}">{{ item.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:3px;margin-top:auto;">
+      <div style="font-size:11px;letter-spacing:.08em;color:oklch(65% 0.02 260);padding:6px 10px;text-transform:uppercase;">Tools</div>
+      <a href="ask_your_data.html" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:13.5px;color:oklch(88% 0.01 260);">
+        <span style="width:6px;height:6px;border-radius:2px;background:oklch(60% 0.02 260 / .5);"></span>Ask Your Data
+      </a>
+      <a href="create_custom_segments.html" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:13.5px;color:oklch(88% 0.01 260);">
+        <span style="width:6px;height:6px;border-radius:2px;background:oklch(60% 0.02 260 / .5);"></span>Create Custom Segments
+      </a>
+      <a href="saved_custom_segments.html" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:13.5px;color:oklch(88% 0.01 260);">
+        <span style="width:6px;height:6px;border-radius:2px;background:oklch(60% 0.02 260 / .5);"></span>Saved Custom Segments
+      </a>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;height:100vh;min-width:0;">
+
+    <div style="height:72px;flex-shrink:0;display:flex;align-items:center;gap:20px;padding:0 26px;background:oklch(32% 0.02 260 / .22);backdrop-filter:blur(20px);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+      <div style="min-width:210px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;">{{ activeTitle }}</div>
+        <div style="font-size:11.5px;color:oklch(68% 0.02 260);">{{ activeSubtitle }}</div>
+      </div>
+
+      <div style="flex:1;position:relative;max-width:520px;">
+        <div style="display:flex;align-items:center;gap:8px;background:oklch(40% 0.02 260 / .30);border:1px solid oklch(95% 0.01 260 / .12);border-radius:12px;padding:9px 14px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="oklch(70% 0.02 260)" stroke-width="2"/><line x1="21" y1="21" x2="16.5" y2="16.5" stroke="oklch(70% 0.02 260)" stroke-width="2"/></svg>
+          <input placeholder="Ask Your Data — e.g. Which segment is churning fastest?" onFocus="{{ onSearchFocus }}" onBlur="{{ onSearchBlur }}" onChange="{{ onSearchChange }}" value="{{ searchValue }}" style="flex:1;background:transparent;border:none;outline:none;color:oklch(94% 0.01 260);font-size:13px;"/>
+        </div>
+        <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:oklch(24% 0.02 260 / .85);backdrop-filter:blur(24px);border:1px solid oklch(95% 0.01 260 / .14);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;z-index:20;box-shadow:0 20px 50px oklch(0% 0 0 / .4);">
+            <div style="font-size:10.5px;color:oklch(65% 0.02 260);padding:2px 6px;text-transform:uppercase;letter-spacing:.06em;">Example queries</div>
+            <sc-for list="{{ exampleQueries }}" as="q" hint-placeholder-count="4">
+              <div onClick="{{ q.go }}" style="padding:8px 10px;border-radius:8px;font-size:13px;color:oklch(90% 0.01 260);cursor:pointer;" style-hover="background:oklch(45% 0.02 260 / .4);">{{ q.text }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:16px;margin-left:auto;">
+        <div style="position:relative;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3a6 6 0 00-6 6v3.5L4 16h16l-2-3.5V9a6 6 0 00-6-6z" stroke="oklch(85% 0.01 260)" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 19a2.5 2.5 0 005 0" stroke="oklch(85% 0.01 260)" stroke-width="1.6"/></svg>
+          <div style="position:absolute;top:-4px;right:-6px;background:oklch(70% 0.18 25);color:white;font-size:9.5px;font-weight:700;border-radius:8px;min-width:15px;height:15px;display:flex;align-items:center;justify-content:center;padding:0 3px;">3</div>
+        </div>
+        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">JA</div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:28px 30px 60px;">
+
+      <sc-if value="{{ is00 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:18px;">
+          <button style="padding:10px 16px;border-radius:10px;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(92% 0.01 260);font-size:13px;font-weight:600;cursor:pointer;">Add Dataset</button>
+          <button style="padding:10px 16px;border-radius:10px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));border:none;color:oklch(12% 0.02 260);font-size:13px;font-weight:700;cursor:pointer;">New Project</button>
+        </div>
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;box-shadow:0 8px 40px oklch(0% 0 0 / .3);">
+          <div style="display:grid;grid-template-columns:1.6fr 2.6fr 1.3fr 1.1fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Action</div><div>Detail</div><div>By</div><div>When</div>
+          </div>
+          <sc-for list="{{ auditRows }}" as="row" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:1.6fr 2.6fr 1.3fr 1.1fr;padding:14px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);">
+              <div style="font-weight:600;">{{ row.action }}</div>
+              <div style="color:oklch(82% 0.01 260);">{{ row.detail }}</div>
+              <div style="color:oklch(70% 0.02 260);">{{ row.by }}</div>
+              <div style="color:oklch(65% 0.02 260);font-variant-numeric:tabular-nums;">{{ row.when }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isL1 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
+          <select style="background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(90% 0.01 260);padding:9px 14px;border-radius:10px;font-size:13px;">
+            <option>This Month</option><option>Last Month</option><option>This Quarter</option>
+          </select>
+        </div>
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;margin-bottom:22px;">
+          <div style="display:grid;grid-template-columns:1.8fr 1fr 1fr 1.2fr 1.4fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Segment</div><div>Size</div><div>MoM %</div><div>Trend</div><div>Flag</div>
+          </div>
+          <sc-for list="{{ l1Segments }}" as="s" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1.8fr 1fr 1fr 1.2fr 1.4fr;align-items:center;padding:13px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);">
+              <div style="font-weight:600;">{{ s.name }}</div>
+              <div style="font-variant-numeric:tabular-nums;">{{ s.size }}</div>
+              <div style="color:{{ s.momColor }};font-weight:600;">{{ s.mom }}</div>
+              <div><svg width="70" height="24" viewBox="0 0 70 24"><polyline points="{{ s.sparkPoints }}" fill="none" stroke="{{ s.momColor }}" stroke-width="2"/></svg></div>
+              <sc-if value="{{ s.flag }}" hint-placeholder-val="{{ false }}">
+                <div title="{{ s.flag }}" style="display:flex;align-items:center;gap:6px;color:oklch(78% 0.15 80);font-size:12px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3l10 18H2z" stroke="oklch(78% 0.15 80)" stroke-width="2" fill="none" stroke-linejoin="round"/><line x1="12" y1="10" x2="12" y2="15" stroke="oklch(78% 0.15 80)" stroke-width="2"/><circle cx="12" cy="18" r="1" fill="oklch(78% 0.15 80)"/></svg>
+                  volatile
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:22px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px;color:oklch(85% 0.01 260);">Segment share over time (stacked)</div>
+          <div style="display:flex;align-items:flex-end;gap:14px;height:160px;">
+            <sc-for list="{{ shareBars }}" as="bar" hint-placeholder-count="6">
+              <div style="flex:1;display:flex;flex-direction:column-reverse;height:100%;border-radius:6px;overflow:hidden;">
+                <sc-for list="{{ bar.segs }}" as="seg" hint-placeholder-count="5">
+                  <div style="height:{{ seg.h }};background:{{ seg.c }};"></div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isL2 }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:oklch(85% 0.01 260);">Cluster Quality Gate</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:26px;">
+          <sc-for list="{{ gateMetrics }}" as="m" hint-placeholder-count="3">
+            <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:16px;padding:18px;">
+              <div style="font-size:12px;color:oklch(68% 0.02 260);margin-bottom:6px;">{{ m.label }}</div>
+              <div style="font-size:26px;font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:10px;">{{ m.value }}</div>
+              <div style="display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:{{ m.badgeBg }};color:{{ m.badgeFg }};">{{ m.badge }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:oklch(85% 0.01 260);display:flex;align-items:center;gap:10px;">LLM Cluster Profiles
+          <span style="font-size:10px;font-weight:700;background:oklch(45% 0.10 300 / .5);color:oklch(88% 0.05 300);padding:3px 8px;border-radius:6px;letter-spacing:.04em;">LLM GENERATED</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:26px;">
+          <sc-for list="{{ clusters }}" as="c" hint-placeholder-count="4">
+            <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:16px;padding:16px;">
+              <div style="font-size:11px;color:oklch(65% 0.02 260);margin-bottom:6px;">{{ c.id }}</div>
+              <div style="font-size:13px;color:oklch(88% 0.01 260);margin-bottom:12px;line-height:1.4;">{{ c.summary }}</div>
+              <input placeholder="Name this cluster…" value="{{ c.name }}" onChange="{{ c.onName }}" style="width:100%;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);border-radius:8px;padding:8px 10px;color:oklch(94% 0.01 260);font-size:13px;outline:none;"/>
+              <div style="font-size:11px;color:oklch(60% 0.02 260);margin-top:6px;">accept LLM suggestion or write your own</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:oklch(85% 0.01 260);">Quarterly Drift</div>
+        <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;">
+          <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:16px;padding:18px;min-height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+            <svg width="140" height="140" viewBox="0 0 140 140"><circle cx="55" cy="55" r="26" fill="oklch(72% 0.15 222 / .35)" stroke="oklch(72% 0.15 222)" stroke-width="1.5"/><circle cx="90" cy="85" r="20" fill="oklch(78% 0.13 195 / .35)" stroke="oklch(78% 0.13 195)" stroke-width="1.5"/><line x1="55" y1="55" x2="90" y2="85" stroke="oklch(85% 0.01 260 / .5)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>
+            <div style="font-size:11.5px;color:oklch(65% 0.02 260);">medoid-shift visualization (placeholder)</div>
+          </div>
+          <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ driftEvents }}" as="e" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:oklch(38% 0.02 260 / .3);border-radius:10px;font-size:13px;">
+                <span style="font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;background:{{ e.tagBg }};color:{{ e.tagFg }};">{{ e.type }}</span>
+                <span style="color:oklch(85% 0.01 260);">{{ e.detail }}</span>
+              </div>
+            </sc-for>
+            <div style="margin-top:6px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:12px;color:oklch(68% 0.02 260);">Decision</span>
+              <span style="font-size:12px;font-weight:700;padding:5px 12px;border-radius:8px;background:oklch(55% 0.15 150 / .35);color:oklch(85% 0.15 150);">ADOPT NEW</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isL3 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;">
+          <div style="display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1.3fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Pair</div><div>Metric</div><div>P-Value</div><div>Effect Size (d)</div><div>Verdict</div>
+          </div>
+          <sc-for list="{{ l3Pairs }}" as="p" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1.3fr;align-items:center;padding:13px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);">
+              <div style="font-weight:600;">{{ p.pair }}</div>
+              <div style="color:oklch(80% 0.01 260);font-family:monospace;">{{ p.metric }}</div>
+              <div style="font-variant-numeric:tabular-nums;">{{ p.p }}</div>
+              <div style="font-variant-numeric:tabular-nums;">{{ p.d }}</div>
+              <div><span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:{{ p.badgeBg }};color:{{ p.badgeFg }};">{{ p.verdict }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);margin-top:12px;">p &lt; 0.05 + d ≥ 0.2 → flagged divergent · outcome variables only, no behavioral clustering inputs</div>
+      </sc-if>
+
+      <sc-if value="{{ isL4 }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:oklch(85% 0.01 260);">Model Selection</div>
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;margin-bottom:24px;">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Model</div><div>PR-AUC</div><div></div>
+          </div>
+          <sc-for list="{{ models }}" as="m" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;align-items:center;padding:13px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);background:{{ m.rowBg }};">
+              <div style="font-weight:600;">{{ m.name }}</div>
+              <div style="font-variant-numeric:tabular-nums;">{{ m.prauc }}</div>
+              <div>
+                <sc-if value="{{ m.winner }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:oklch(72% 0.15 222 / .3);color:oklch(80% 0.13 222);">WINNER</span>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:oklch(85% 0.01 260);">Migration Label Distribution</div>
+        <div style="display:flex;gap:14px;margin-bottom:24px;">
+          <div style="flex:1;background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:16px;padding:18px;">
+            <div style="font-size:12px;color:oklch(68% 0.02 260);">migrated = True</div>
+            <div style="font-size:24px;font-family:'Space Grotesk',sans-serif;font-weight:600;">7,214 <span style="font-size:13px;color:oklch(70% 0.02 260);font-weight:500;">(22.4%)</span></div>
+          </div>
+          <div style="flex:1;background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:16px;padding:18px;">
+            <div style="font-size:12px;color:oklch(68% 0.02 260);">migrated = False</div>
+            <div style="font-size:24px;font-family:'Space Grotesk',sans-serif;font-weight:600;">24,982 <span style="font-size:13px;color:oklch(70% 0.02 260);font-weight:500;">(77.6%)</span></div>
+          </div>
+        </div>
+
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:oklch(85% 0.01 260);">Per-Customer Predictions</div>
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;">
+          <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Customer ID</div><div>Current Cluster</div><div>Predicted Destination</div>
+          </div>
+          <sc-for list="{{ predictions }}" as="row" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:13px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);font-family:monospace;">
+              <div>{{ row.id }}</div><div style="font-family:'Inter',sans-serif;">{{ row.current }}</div><div style="font-family:'Inter',sans-serif;color:oklch(80% 0.13 195);">{{ row.predicted }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isL5 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:22px;overflow-x:auto;">
+          <div style="display:grid;grid-template-columns:140px repeat(5,1fr);gap:6px;min-width:700px;">
+            <div></div>
+            <sc-for list="{{ clusterLabels }}" as="lbl" hint-placeholder-count="5">
+              <div style="font-size:11px;color:oklch(65% 0.02 260);text-align:center;padding:6px;">{{ lbl }}</div>
+            </sc-for>
+            <sc-for list="{{ matrixRows }}" as="row" hint-placeholder-count="5">
+              <div style="font-size:12px;color:oklch(80% 0.01 260);display:flex;align-items:center;padding:8px 6px;font-weight:600;">{{ row.label }}</div>
+              <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+                <div style="aspect-ratio:1.6;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-variant-numeric:tabular-nums;background:{{ cell.bg }};border:{{ cell.border }};font-weight:{{ cell.weight }};">{{ cell.value }}</div>
+              </sc-for>
+            </sc-for>
+          </div>
+        </div>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);margin-top:12px;">rows sum to 1.0 · hover cell for customer count · clusters absent from rows if zero members at T</div>
+      </sc-if>
+
+      <sc-if value="{{ isL6 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;">
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Segment</div><div>Churn</div><div>Retain</div><div>Rev/U</div><div>Repeat</div>
+          </div>
+          <sc-for list="{{ l6Rows }}" as="row" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;align-items:center;padding:13px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);cursor:pointer;" title="links to cohort curve">
+              <div style="font-weight:600;">{{ row.segment }}</div>
+              <div style="color:{{ row.churnColor }};font-weight:600;">{{ row.churn }}</div>
+              <div>{{ row.retain }}</div>
+              <div>{{ row.revU }}</div>
+              <div>{{ row.repeat }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);margin-top:12px;">each cell links to its cohort curve · four metrics only — no profitability</div>
+      </sc-if>
+
+      <sc-if value="{{ isL7 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+          <select style="background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(90% 0.01 260);padding:9px 14px;border-radius:10px;font-size:13px;"><option>Monthly</option><option>Weekly</option><option>Quarterly</option></select>
+          <select style="background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(90% 0.01 260);padding:9px 14px;border-radius:10px;font-size:13px;"><option>Retention Rate</option><option>Churn Rate</option><option>Rev/User</option></select>
+          <div style="display:flex;align-items:center;gap:8px;background:oklch(40% 0.02 260 / .30);border:1px solid oklch(95% 0.01 260 / .12);border-radius:10px;padding:6px 10px;flex-wrap:wrap;">
+            <span style="font-size:11px;color:oklch(65% 0.02 260);">SEGMENTS:</span>
+            <sc-for list="{{ l7Segments }}" as="seg" hint-placeholder-count="2">
+              <span style="display:flex;align-items:center;gap:6px;font-size:12px;background:oklch(72% 0.15 222 / .25);color:oklch(85% 0.10 222);padding:5px 8px 5px 10px;border-radius:16px;">
+                {{ seg.name }}
+                <span onClick="{{ seg.remove }}" style="cursor:pointer;font-weight:700;">×</span>
+              </span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;">
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Segment</div><div>T-2</div><div>T-1</div><div>T (current)</div>
+          </div>
+          <sc-for list="{{ l7Rows }}" as="row" hint-placeholder-count="2">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:13px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);">
+              <div style="font-weight:600;">{{ row.name }}</div><div>{{ row.t2 }}</div><div>{{ row.t1 }}</div><div>{{ row.t0 }}</div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ showGapRow }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:13px 18px;font-size:13px;background:oklch(72% 0.15 222 / .12);">
+              <div style="font-weight:700;color:oklch(85% 0.10 222);">Δ Gap · 2-SEG ONLY</div><div>1.8pp</div><div>2.4pp</div><div style="font-weight:700;">3.1pp</div>
+            </div>
+          </sc-if>
+        </div>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);margin-top:12px;">gap row appears only when exactly 2 segments are selected</div>
+      </sc-if>
+
+      <sc-if value="{{ isL8 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:6px;">
+          <div style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 1fr;padding:14px 18px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+            <div>Customer ID</div><div>Feature Trajectory</div><div>Drift Fraction</div><div>Level</div>
+          </div>
+          <sc-for list="{{ l8Customers }}" as="c" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 1fr;align-items:center;padding:13px 18px;font-size:13px;border-bottom:1px solid oklch(95% 0.01 260 / .06);cursor:pointer;font-family:monospace;" title="click row → customer timeline detail">
+              <div>{{ c.id }}</div>
+              <div><svg width="90" height="24" viewBox="0 0 90 24"><polyline points="{{ c.sparkPoints }}" fill="none" stroke="{{ c.badgeColor }}" stroke-width="2"/></svg></div>
+              <div style="font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;">{{ c.drift }}</div>
+              <div style="font-family:'Inter',sans-serif;"><span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:{{ c.badgeBg }};color:{{ c.badgeColor }};">{{ c.badge }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:oklch(62% 0.02 260);margin-top:12px;">sorted by drift fraction descending · click row → customer timeline detail</div>
+      </sc-if>
+
+      <sc-if value="{{ isA1 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:26px;max-width:780px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;">Q2 2026 Narrative Summary</div>
+            <span style="font-size:10px;font-weight:700;background:oklch(45% 0.10 300 / .5);color:oklch(88% 0.05 300);padding:3px 8px;border-radius:6px;letter-spacing:.04em;">AGENT 1</span>
+          </div>
+          <div style="font-size:12px;color:oklch(65% 0.02 260);margin-bottom:18px;">generated for J. Alvarez · 2026-07-10</div>
+          <div style="font-size:14px;line-height:1.7;color:oklch(88% 0.01 260);">
+            Segment performance was broadly stable this quarter, with <strong style="color:oklch(85% 0.10 222);">Power Users</strong> growing <strong>+3.2% MoM</strong> and remaining the strongest retention cohort at <strong>95.8%</strong>. <strong style="color:oklch(78% 0.15 80);">Dormant</strong> and <strong style="color:oklch(78% 0.15 80);">At-Risk</strong> both exceeded their historical noise bands, suggesting a real shift rather than seasonal variance. Clustering re-validated with an ARI of <strong>0.71</strong>, and quarterly drift analysis recommended adopting the new cluster structure after two clusters merged and one split.
+          </div>
+          <div style="display:flex;gap:10px;margin-top:22px;">
+            <button style="padding:10px 16px;border-radius:10px;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(92% 0.01 260);font-size:13px;font-weight:600;cursor:pointer;">Regenerate</button>
+            <button style="padding:10px 16px;border-radius:10px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));border:none;color:oklch(12% 0.02 260);font-size:13px;font-weight:700;cursor:pointer;">Export</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    nav: '00',
+    searchOpen: false,
+    searchValue: '',
+    clusterNames: { C1: '', C2: '', C3: '', C4: '' },
+    l7Segments: ['Power Users', 'Deal Seekers'],
+  };
+
+  NAV_META = [
+    { id: '00', label: '00 Setup', subtitle: 'Ingestion audit trail & dataset controls' },
+    { id: 'l1', label: 'L1 Demographic', subtitle: 'Segment size, momentum & volatility' },
+    { id: 'l2', label: 'L2 Behavioral', subtitle: 'Cluster quality, LLM profiles & drift' },
+    { id: 'l3', label: 'L3 Statistical', subtitle: 'Pairwise significance on outcome variables' },
+    { id: 'l4', label: 'L4 Predictive', subtitle: 'Migration model & per-customer predictions' },
+    { id: 'l5', label: 'L5 Migration', subtitle: 'Transition probability matrix' },
+    { id: 'l6', label: 'L6 Outcome', subtitle: 'Churn, retention, revenue & repeat rate' },
+    { id: 'l7', label: 'L7 Metric Integration', subtitle: 'Segment comparison across time' },
+    { id: 'l8', label: 'L8 Feature Signal', subtitle: 'Customer-level feature drift' },
+    { id: 'a1', label: 'A1 Narration', subtitle: 'Agent-generated quarterly narrative' },
+  ];
+
+  ALL_SEGMENTS = { 'Power Users': ['48','41','52','44','58','61'], 'Deal Seekers': ['61','58','63','55','50','47'] };
+
+  selectNav = (e) => {
+    const id = e.currentTarget.getAttribute('data-nav-id');
+    this.setState({ nav: id });
+  };
+  onSearchFocus = () => this.setState({ searchOpen: true });
+  onSearchBlur = () => setTimeout(() => this.setState({ searchOpen: false }), 150);
+  onSearchChange = (e) => this.setState({ searchValue: e.target.value });
+  goQuery = (text) => () => { window.location.href = 'ask_your_data.html?q=' + encodeURIComponent(text); };
+
+  renderVals() {
+    const nav = this.state.nav;
+    const active = this.NAV_META.find(n => n.id === nav) || this.NAV_META[0];
+
+    const navItems = this.NAV_META.map(n => {
+      const isActive = n.id === nav;
+      return {
+        id: n.id, label: n.label,
+        rowStyle: `display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:13.5px;cursor:pointer;background:${isActive ? 'oklch(72% 0.15 222 / .18)' : 'transparent'};border:1px solid ${isActive ? 'oklch(72% 0.15 222 / .35)' : 'transparent'};`,
+        dotStyle: `width:6px;height:6px;border-radius:2px;background:${isActive ? 'oklch(78% 0.13 195)' : 'oklch(60% 0.02 260 / .5)'};flex-shrink:0;`,
+        labelStyle: `color:${isActive ? 'oklch(96% 0.01 260)' : 'oklch(80% 0.01 260)'};font-weight:${isActive ? 600 : 500};`,
+      };
+    });
+
+    const exampleQueries = [
+      'Which segment is churning fastest?',
+      'Compare Power Users vs Deal Seekers on retention',
+      'Why did churn increase this quarter?',
+      "Show me this quarter's drift",
+    ].map(text => ({ text, go: this.goQuery(text) }));
+
+    const spark = (pts) => pts.map((v, i) => `${i * (70 / (pts.length - 1))},${24 - v * 22}`).join(' ');
+    const l1Raw = [
+      { name: 'Power Users', size: '18,204', mom: '+3.2%', up: true, flag: null, pts: [.3,.4,.35,.5,.55,.6] },
+      { name: 'Deal Seekers', size: '24,910', mom: '-1.8%', up: false, flag: null, pts: [.6,.55,.5,.48,.4,.38] },
+      { name: 'Dormant', size: '9,442', mom: '+7.6%', up: true, flag: 'exceeds historical noise band', pts: [.2,.25,.3,.5,.7,.85] },
+      { name: 'New Adopters', size: '6,105', mom: '+0.4%', up: true, flag: null, pts: [.4,.42,.4,.43,.41,.42] },
+      { name: 'At-Risk', size: '11,873', mom: '-4.1%', up: false, flag: 'exceeds historical noise band', pts: [.7,.6,.55,.45,.35,.28] },
+    ];
+    const l1Segments = l1Raw.map(s => ({ ...s, momColor: s.up ? 'oklch(75% 0.16 150)' : 'oklch(70% 0.18 25)', sparkPoints: spark(s.pts) }));
+
+    const shareColors = ['oklch(72% 0.15 222)','oklch(78% 0.13 195)','oklch(75% 0.16 150)','oklch(78% 0.15 80)','oklch(70% 0.18 25)'];
+    const shareBars = [1,2,3,4,5,6].map(() => ({ segs: [30,25,20,15,10].map((h,i) => ({ h: h + '%', c: shareColors[i] + ' / .7' })) }));
+
+    const gateMetrics = [
+      { label: 'Stability (ARI)', value: '0.71', badge: 'PASS', badgeBg: 'oklch(55% 0.15 150 / .3)', badgeFg: 'oklch(80% 0.15 150)' },
+      { label: 'Separation (Silhouette)', value: '0.42', badge: 'PASS', badgeBg: 'oklch(55% 0.15 150 / .3)', badgeFg: 'oklch(80% 0.15 150)' },
+      { label: 'Noise Fraction', value: '0.06', badge: 'PASS', badgeBg: 'oklch(55% 0.15 150 / .3)', badgeFg: 'oklch(80% 0.15 150)' },
+    ];
+
+    const clusterDefs = [
+      { id: 'C1', summary: 'Frequent buyers with high basket size and low discount sensitivity.' },
+      { id: 'C2', summary: 'Infrequent, highly discount-driven purchasers.' },
+      { id: 'C3', summary: 'New accounts with single-session activity.' },
+      { id: 'C4', summary: 'Long-tenured but recently inactive.' },
+    ];
+    const clusters = clusterDefs.map(c => ({
+      ...c, name: this.state.clusterNames[c.id],
+      onName: (e) => this.setState(s => ({ clusterNames: { ...s.clusterNames, [c.id]: e.target.value } })),
+    }));
+
+    const driftEvents = [
+      { type: 'MERGE', detail: 'C2 + C5 → C2', tagBg: 'oklch(72% 0.15 222 / .3)', tagFg: 'oklch(85% 0.10 222)' },
+      { type: 'SPLIT', detail: 'C1 → C1, C6', tagBg: 'oklch(78% 0.15 80 / .3)', tagFg: 'oklch(88% 0.12 80)' },
+      { type: 'DISAPPEARED', detail: 'C7 (12 members reassigned)', tagBg: 'oklch(70% 0.18 25 / .3)', tagFg: 'oklch(85% 0.12 25)' },
+    ];
+
+    const l3Raw = [
+      { pair: 'Power Users vs Deal Seekers', metric: 'retention_90d', p: '0.002', d: '0.41', verdict: 'DIVERGENT' },
+      { pair: 'Dormant vs At-Risk', metric: 'churn_rate', p: '0.184', d: '0.09', verdict: 'SIMILAR' },
+      { pair: 'New Adopters vs Power Users', metric: 'ltv', p: '0.031', d: '0.27', verdict: 'DIVERGENT' },
+    ];
+    const l3Pairs = l3Raw.map(p => ({ ...p, badgeBg: p.verdict === 'DIVERGENT' ? 'oklch(70% 0.18 25 / .3)' : 'oklch(55% 0.02 260 / .3)', badgeFg: p.verdict === 'DIVERGENT' ? 'oklch(85% 0.12 25)' : 'oklch(80% 0.01 260)' }));
+
+    const modelsRaw = [
+      { name: 'XGBoost', prauc: '0.812', winner: true },
+      { name: 'Random Forest', prauc: '0.784', winner: false },
+      { name: 'Gradient Boosting', prauc: '0.795', winner: false },
+      { name: 'Logistic Regression', prauc: '0.701', winner: false },
+    ];
+    const models = modelsRaw.map(m => ({ ...m, rowBg: m.winner ? 'oklch(72% 0.15 222 / .12)' : 'transparent' }));
+
+    const predictions = [
+      { id: 'CUS-10234', current: 'Deal Seekers', predicted: 'Power Users' },
+      { id: 'CUS-10391', current: 'Dormant', predicted: 'At-Risk' },
+      { id: 'CUS-10558', current: 'At-Risk', predicted: 'Dormant' },
+    ];
+
+    const clusterLabels = ['Power Users', 'Deal Seekers', 'Dormant', 'New Adopters', 'At-Risk'];
+    const matrixData = [
+      [0.62, 0.15, 0.05, 0.10, 0.08],
+      [0.10, 0.58, 0.12, 0.08, 0.12],
+      [0.04, 0.10, 0.71, 0.05, 0.10],
+      [0.18, 0.12, 0.08, 0.55, 0.07],
+      [0.06, 0.14, 0.20, 0.05, 0.55],
+    ];
+    const matrixRows = clusterLabels.map((label, i) => ({
+      label,
+      cells: matrixData[i].map((v, j) => {
+        const diag = i === j;
+        return {
+          value: v.toFixed(2),
+          bg: diag ? 'oklch(72% 0.15 222 / .35)' : `oklch(45% 0.02 260 / ${0.15 + v * 0.5})`,
+          border: diag ? '1px solid oklch(78% 0.13 195 / .6)' : '1px solid oklch(95% 0.01 260 / .08)',
+          weight: diag ? 700 : 400,
+        };
+      }),
+    }));
+
+    const l6Raw = [
+      { segment: 'Power Users', churn: '4.2%', retain: '95.8%', revU: '$182', repeat: '3.4x', churnLevel: 'low' },
+      { segment: 'Deal Seekers', churn: '11.6%', retain: '88.4%', revU: '$64', repeat: '1.8x', churnLevel: 'mid' },
+      { segment: 'Dormant', churn: '38.7%', retain: '61.3%', revU: '$12', repeat: '1.1x', churnLevel: 'high' },
+      { segment: 'New Adopters', churn: '9.1%', retain: '90.9%', revU: '$97', repeat: '1.4x', churnLevel: 'low' },
+      { segment: 'At-Risk', churn: '24.3%', retain: '75.7%', revU: '$41', repeat: '1.6x', churnLevel: 'high' },
+    ];
+    const churnColors = { low: 'oklch(75% 0.16 150)', mid: 'oklch(78% 0.15 80)', high: 'oklch(70% 0.18 25)' };
+    const l6Rows = l6Raw.map(r => ({ ...r, churnColor: churnColors[r.churnLevel] }));
+
+    const l7Segments = this.state.l7Segments.map(name => ({
+      name, remove: () => this.setState(s => ({ l7Segments: s.l7Segments.filter(n => n !== name) })),
+    }));
+    const l7Rows = this.state.l7Segments.map(name => {
+      const vals = this.ALL_SEGMENTS[name] || ['—','—','—'];
+      return { name, t2: vals[2] + '%', t1: vals[4] + '%', t0: vals[5] + '%' };
+    });
+
+    const l8Raw = [
+      { id: 'CUS-88213', drift: '0.91', badge: 'HIGH', pts: [.2,.35,.5,.7,.85,.95] },
+      { id: 'CUS-77410', drift: '0.64', badge: 'MED', pts: [.3,.35,.45,.5,.55,.6] },
+      { id: 'CUS-65310', drift: '0.22', badge: 'LOW', pts: [.4,.38,.35,.3,.28,.25] },
+    ];
+    const badgeColors = { HIGH: 'oklch(70% 0.18 25)', MED: 'oklch(78% 0.15 80)', LOW: 'oklch(75% 0.16 150)' };
+    const l8Customers = l8Raw.map(c => ({ ...c, sparkPoints: spark(c.pts), badgeColor: badgeColors[c.badge], badgeBg: badgeColors[c.badge] + ' / .25' }));
+
+    return {
+      activeTitle: active.label, activeSubtitle: active.subtitle,
+      navItems, exampleQueries,
+      searchOpen: this.state.searchOpen, searchValue: this.state.searchValue,
+      is00: nav === '00', isL1: nav === 'l1', isL2: nav === 'l2', isL3: nav === 'l3', isL4: nav === 'l4',
+      isL5: nav === 'l5', isL6: nav === 'l6', isL7: nav === 'l7', isL8: nav === 'l8', isA1: nav === 'a1',
+      auditRows: [
+        { action: 'Columns confirmed', detail: '42 of 47 columns included · 5 excluded (miss% > 50)', by: 'PM: J. Alvarez', when: '2026-07-10 09:14' },
+        { action: 'Imputation applied', detail: 'income → median · last_login → forward-fill · region → mode', by: 'PM: J. Alvarez', when: '2026-07-10 09:16' },
+        { action: 'Outlier treatment', detail: 'lifetime_value capped at P99 (winsorized)', by: 'System default', when: '2026-07-10 09:16' },
+        { action: 'Cross-field rule approved', detail: 'signup_date ≤ last_active', by: 'PM: J. Alvarez', when: '2026-07-10 09:19' },
+        { action: 'Cross-field rule approved', detail: 'end_date ≥ start_date', by: 'PM: J. Alvarez', when: '2026-07-10 09:19' },
+        { action: 'Demographic classification confirmed', detail: 'age, region, income → Demographic · 3 fields marked Unsure resolved', by: 'PM: J. Alvarez', when: '2026-07-10 09:22' },
+      ],
+      l1Segments, shareBars, gateMetrics, clusters, driftEvents, l3Pairs, models, predictions,
+      clusterLabels, matrixRows, l6Rows, l7Segments, l7Rows, showGapRow: this.state.l7Segments.length === 2,
+      l8Customers,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+            <sc-if value="{{ dash.isL1 }}" hint-placeholder-val="{{ true }}">
+              <div style="{{ cardStyle }};padding:6px;margin-bottom:20px;">
+                <div style="display:grid;grid-template-columns:1.8fr 1fr 1fr 1.2fr 1.4fr;padding:12px 16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+                  <div>Segment</div><div>Size</div><div>MoM %</div><div>Trend</div><div>Flag</div>
+                </div>
+                <sc-for list="{{ dash.l1Segments }}" as="s" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:1.8fr 1fr 1fr 1.2fr 1.4fr;align-items:center;padding:12px 16px;font-size:12.5px;border-bottom:1px solid oklch(95% 0.01 260 / .06);">
+                    <div style="font-weight:600;">{{ s.name }}</div><div>{{ s.size }}</div>
+                    <div style="color:{{ s.momColor }};font-weight:600;">{{ s.mom }}</div>
+                    <div><svg width="60" height="20" viewBox="0 0 70 24"><polyline points="{{ s.sparkPoints }}" fill="none" stroke="{{ s.momColor }}" stroke-width="2"/></svg></div>
+                    <sc-if value="{{ s.flag }}" hint-placeholder-val="{{ false }}"><div style="color:oklch(78% 0.15 80);font-size:11px;">volatile</div></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isL2 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px;font-weight:700;margin-bottom:8px;">Cluster Quality Gate</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;">
+                <sc-for list="{{ dash.gateMetrics }}" as="m" hint-placeholder-count="3">
+                  <div style="{{ cardStyle }};padding:16px;">
+                    <div style="font-size:11.5px;color:oklch(68% 0.02 260);margin-bottom:5px;">{{ m.label }}</div>
+                    <div style="font-size:22px;font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:8px;">{{ m.value }}</div>
+                    <div style="display:inline-block;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:{{ m.badgeBg }};color:{{ m.badgeFg }};">{{ m.badge }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:12.5px;font-weight:700;margin-bottom:8px;">LLM Cluster Profiles</div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px;">
+                <sc-for list="{{ dash.clusters }}" as="c" hint-placeholder-count="4">
+                  <div style="{{ cardStyle }};padding:14px;">
+                    <div style="font-size:10.5px;color:oklch(65% 0.02 260);margin-bottom:5px;">{{ c.id }}</div>
+                    <div style="font-size:12.5px;color:oklch(88% 0.01 260);margin-bottom:10px;">{{ c.summary }}</div>
+                    <input placeholder="Name this cluster…" value="{{ c.name }}" onChange="{{ c.onName }}" style="width:100%;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);border-radius:8px;padding:7px 9px;color:oklch(94% 0.01 260);font-size:12.5px;"/>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:12.5px;font-weight:700;margin-bottom:8px;">Quarterly Drift</div>
+              <div style="{{ cardStyle }};padding:14px;">
+                <sc-for list="{{ dash.driftEvents }}" as="e" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:oklch(38% 0.02 260 / .3);border-radius:9px;font-size:12.5px;margin-bottom:6px;">
+                    <span style="font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;background:{{ e.tagBg }};color:{{ e.tagFg }};">{{ e.type }}</span><span>{{ e.detail }}</span>
+                  </div>
+                </sc-for>
+                <div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:11.5px;color:oklch(68% 0.02 260);">Decision</span><span style="font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:8px;background:oklch(55% 0.15 150 / .35);color:oklch(85% 0.15 150);">ADOPT NEW</span></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isL3 }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ cardStyle }};padding:6px;">
+                <div style="display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1.3fr;padding:12px 16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);">
+                  <div>Pair</div><div>Metric</div><div>P-Value</div><div>Effect (d)</div><div>Verdict</div>
+                </div>
+                <sc-for list="{{ dash.l3Pairs }}" as="p" hint-placeholder-count="3">
+                  <div style="display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1.3fr;align-items:center;padding:12px 16px;font-size:12.5px;border-bottom:1px solid oklch(95% 0.01 260 / .06);">
+                    <div style="font-weight:600;">{{ p.pair }}</div><div style="font-family:monospace;">{{ p.metric }}</div><div>{{ p.p }}</div><div>{{ p.d }}</div>
+                    <div><span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:{{ p.badgeBg }};color:{{ p.badgeFg }};">{{ p.verdict }}</span></div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:11.5px;color:oklch(62% 0.02 260);margin-top:10px;">p &lt; 0.05 + d ≥ 0.2 → flagged divergent</div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isL4 }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px;font-weight:700;margin-bottom:8px;">Model Selection</div>
+              <div style="{{ cardStyle }};padding:6px;margin-bottom:20px;">
+                <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:12px 16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);"><div>Model</div><div>PR-AUC</div><div></div></div>
+                <sc-for list="{{ dash.models }}" as="m" hint-placeholder-count="4">
+                  <div style="display:grid;grid-template-columns:2fr 1fr 1fr;align-items:center;padding:12px 16px;font-size:12.5px;border-bottom:1px solid oklch(95% 0.01 260 / .06);background:{{ m.rowBg }};">
+                    <div style="font-weight:600;">{{ m.name }}</div><div>{{ m.prauc }}</div>
+                    <div><sc-if value="{{ m.winner }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:oklch(72% 0.15 222 / .3);color:oklch(80% 0.13 222);">WINNER</span></sc-if></div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:12.5px;font-weight:700;margin-bottom:8px;">Migration Label Distribution</div>
+              <div style="display:flex;gap:12px;margin-bottom:20px;">
+                <div style="{{ cardStyle }};padding:16px;flex:1;"><div style="font-size:11.5px;color:oklch(68% 0.02 260);">migrated = True</div><div style="font-size:20px;font-weight:600;font-family:'Space Grotesk',sans-serif;">7,214 (22.4%)</div></div>
+                <div style="{{ cardStyle }};padding:16px;flex:1;"><div style="font-size:11.5px;color:oklch(68% 0.02 260);">migrated = False</div><div style="font-size:20px;font-weight:600;font-family:'Space Grotesk',sans-serif;">24,982 (77.6%)</div></div>
+              </div>
+              <div style="font-size:12.5px;font-weight:700;margin-bottom:8px;">Per-Customer Predictions</div>
+              <div style="{{ cardStyle }};padding:6px;">
+                <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:12px 16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);"><div>Customer ID</div><div>Current</div><div>Predicted</div></div>
+                <sc-for list="{{ dash.predictions }}" as="row" hint-placeholder-count="3">
+                  <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:12px 16px;font-size:12.5px;border-bottom:1px solid oklch(95% 0.01 260 / .06);font-family:monospace;"><div>{{ row.id }}</div><div style="font-family:'Inter',sans-serif;">{{ row.current }}</div><div style="font-family:'Inter',sans-serif;color:oklch(80% 0.13 195);">{{ row.predicted }}</div></div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isL5 }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ cardStyle }};padding:20px;overflow-x:auto;">
+                <div style="display:grid;grid-template-columns:130px repeat(5,1fr);gap:6px;min-width:640px;">
+                  <div></div>
+                  <sc-for list="{{ dash.clusterLabels }}" as="lbl" hint-placeholder-count="5"><div style="font-size:10.5px;color:oklch(65% 0.02 260);text-align:center;padding:5px;">{{ lbl }}</div></sc-for>
+                  <sc-for list="{{ dash.matrixRows }}" as="row" hint-placeholder-count="5">
+                    <div style="font-size:11.5px;color:oklch(80% 0.01 260);display:flex;align-items:center;padding:7px 5px;font-weight:600;">{{ row.label }}</div>
+                    <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+                      <div style="aspect-ratio:1.6;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11.5px;background:{{ cell.bg }};border:{{ cell.border }};font-weight:{{ cell.weight }};">{{ cell.value }}</div>
+                    </sc-for>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="font-size:11.5px;color:oklch(62% 0.02 260);margin-top:10px;">rows sum to 1.0 · hover cell for customer count</div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isL6 }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ cardStyle }};padding:6px;">
+                <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;padding:12px 16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);"><div>Segment</div><div>Churn</div><div>Retain</div><div>Rev/U</div><div>Repeat</div></div>
+                <sc-for list="{{ dash.l6Rows }}" as="row" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;align-items:center;padding:12px 16px;font-size:12.5px;border-bottom:1px solid oklch(95% 0.01 260 / .06);">
+                    <div style="font-weight:600;">{{ row.segment }}</div><div style="color:{{ row.churnColor }};font-weight:600;">{{ row.churn }}</div><div>{{ row.retain }}</div><div>{{ row.revU }}</div><div>{{ row.repeat }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isL7 }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+                <select style="{{ selectStyle }}"><option>Monthly</option></select>
+                <select style="{{ selectStyle }}"><option>Retention Rate</option></select>
+                <div style="display:flex;align-items:center;gap:6px;background:oklch(40% 0.02 260 / .30);border:1px solid oklch(95% 0.01 260 / .12);border-radius:10px;padding:5px 8px;">
+                  <sc-for list="{{ dash.l7Segments }}" as="seg" hint-placeholder-count="2">
+                    <span style="display:flex;align-items:center;gap:5px;font-size:11.5px;background:oklch(72% 0.15 222 / .25);color:oklch(85% 0.10 222);padding:4px 7px 4px 9px;border-radius:16px;">{{ seg.name }}<span onClick="{{ seg.remove }}" style="cursor:pointer;font-weight:700;">×</span></span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="{{ cardStyle }};padding:6px;">
+                <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:12px 16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);"><div>Segment</div><div>T-2</div><div>T-1</div><div>T (current)</div></div>
+                <sc-for list="{{ dash.l7Rows }}" as="row" hint-placeholder-count="2">
+                  <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:12px 16px;font-size:12.5px;border-bottom:1px solid oklch(95% 0.01 260 / .06);"><div style="font-weight:600;">{{ row.name }}</div><div>{{ row.t2 }}</div><div>{{ row.t1 }}</div><div>{{ row.t0 }}</div></div>
+                </sc-for>
+                <sc-if value="{{ dash.showGapRow }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:12px 16px;font-size:12.5px;background:oklch(72% 0.15 222 / .12);"><div style="font-weight:700;color:oklch(85% 0.10 222);">Δ Gap · 2-SEG ONLY</div><div>1.8pp</div><div>2.4pp</div><div style="font-weight:700;">3.1pp</div></div>
+                </sc-if>
+              </div>
+              <div style="font-size:11.5px;color:oklch(62% 0.02 260);margin-top:10px;">gap row appears only when exactly 2 segments are selected</div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isL8 }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ cardStyle }};padding:6px;">
+                <div style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 1fr;padding:12px 16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);border-bottom:1px solid oklch(95% 0.01 260 / .08);"><div>Customer ID</div><div>Trajectory</div><div>Drift</div><div>Level</div></div>
+                <sc-for list="{{ dash.l8Customers }}" as="c" hint-placeholder-count="3">
+                  <div style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 1fr;align-items:center;padding:12px 16px;font-size:12.5px;border-bottom:1px solid oklch(95% 0.01 260 / .06);font-family:monospace;">
+                    <div>{{ c.id }}</div><div><svg width="80" height="20" viewBox="0 0 90 24"><polyline points="{{ c.sparkPoints }}" fill="none" stroke="{{ c.badgeColor }}" stroke-width="2"/></svg></div>
+                    <div style="font-family:'Inter',sans-serif;">{{ c.drift }}</div>
+                    <div style="font-family:'Inter',sans-serif;"><span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:{{ c.badgeBg }};color:{{ c.badgeColor }};">{{ c.badge }}</span></div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ dash.isA1 }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ cardStyle }};padding:24px;max-width:740px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;">Q2 2026 Narrative Summary</div><span style="font-size:9.5px;font-weight:700;background:oklch(45% 0.10 300 / .5);color:oklch(88% 0.05 300);padding:3px 8px;border-radius:6px;">AGENT 1</span></div>
+                <div style="font-size:11.5px;color:oklch(65% 0.02 260);margin-bottom:16px;">generated for J. Alvarez · 2026-07-10</div>
+    

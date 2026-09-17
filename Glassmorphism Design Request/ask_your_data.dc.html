@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Inter',sans-serif; }
+  input,select,button{font-family:inherit;}
+  a{color:oklch(78% 0.13 210);}
+</style>
+</helmet>
+
+<div style="width:100%;min-height:100vh;background:radial-gradient(1200px 800px at 12% 8%, oklch(48% 0.16 255 / .32), transparent 60%), radial-gradient(1100px 750px at 88% 92%, oklch(72% 0.13 195 / .28), transparent 60%), oklch(15% 0.02 260);color:oklch(96% 0.01 260);padding:36px 24px 80px;display:flex;flex-direction:column;align-items:center;">
+
+  <div style="width:100%;max-width:760px;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;margin-bottom:6px;">Ask Your Data</div>
+    <div style="font-size:13px;color:oklch(68% 0.02 260);margin-bottom:22px;">Persistent natural-language query bar — always available from the top bar</div>
+
+    <div style="position:relative;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;background:oklch(40% 0.02 260 / .32);border:1px solid oklch(95% 0.01 260 / .14);border-radius:14px;padding:14px 18px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="oklch(70% 0.02 260)" stroke-width="2"/><line x1="21" y1="21" x2="16.5" y2="16.5" stroke="oklch(70% 0.02 260)" stroke-width="2"/></svg>
+        <input placeholder="Ask anything about your segments…" value="{{ query }}" onChange="{{ onQueryChange }}" onFocus="{{ onFocus }}" style="flex:1;background:transparent;border:none;outline:none;color:oklch(94% 0.01 260);font-size:14px;"/>
+        <button onClick="{{ onSubmit }}" style="padding:8px 16px;border-radius:9px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));border:none;color:oklch(12% 0.02 260);font-size:12.5px;font-weight:700;cursor:pointer;">Ask</button>
+      </div>
+
+      <sc-if value="{{ showChips }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:10px;background:oklch(24% 0.02 260 / .85);backdrop-filter:blur(24px);border:1px solid oklch(95% 0.01 260 / .14);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 20px 50px oklch(0% 0 0 / .4);">
+          <div style="font-size:10.5px;color:oklch(65% 0.02 260);padding:2px 6px;text-transform:uppercase;letter-spacing:.06em;">State 1 · Idle — example queries</div>
+          <sc-for list="{{ exampleChips }}" as="c" hint-placeholder-count="5">
+            <div onClick="{{ c.go }}" style="padding:9px 12px;border-radius:9px;font-size:13px;color:oklch(90% 0.01 260);cursor:pointer;background:oklch(38% 0.02 260 / .3);">{{ c.text }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px;">
+      <span style="font-size:11px;color:oklch(60% 0.02 260);align-self:center;margin-right:4px;">Jump to state:</span>
+      <button onClick="{{ jumpProcessing }}" style="{{ jumpBtnStyle }}">State 2 · Processing</button>
+      <button onClick="{{ jumpShow }}" style="{{ jumpBtnStyle }}">State 3a · Show/Viz</button>
+      <button onClick="{{ jumpCompare }}" style="{{ jumpBtnStyle }}">State 3b · Comparison</button>
+      <button onClick="{{ jumpRootCause }}" style="{{ jumpBtnStyle }}">State 3c · Root Cause</button>
+      <button onClick="{{ jumpOos }}" style="{{ jumpBtnStyle }}">State 3d · Out of Scope</button>
+    </div>
+
+    <sc-if value="{{ isProcessing }}" hint-placeholder-val="{{ false }}">
+      <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:36px;text-align:center;">
+        <div style="font-size:11px;color:oklch(65% 0.02 260);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">State 2 · Processing</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;">
+          <div style="width:16px;height:16px;border-radius:50%;border:2.5px solid oklch(95% 0.01 260 / .2);border-top-color:oklch(78% 0.13 195);animation:spin 0.8s linear infinite;"></div>
+          <div style="font-size:14px;color:oklch(88% 0.01 260);">"{{ query }}"</div>
+        </div>
+        <div style="font-size:12.5px;color:oklch(65% 0.02 260);">interpreting query and routing to the right layer…</div>
+      </div>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    </sc-if>
+
+    <sc-if value="{{ isShowResult }}" hint-placeholder-val="{{ false }}">
+      <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:26px;">
+        <div style="font-size:11px;color:oklch(65% 0.02 260);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">State 3a · Show / Visualisation result — "Show churn rate by segment"</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span style="font-size:10.5px;font-weight:700;background:oklch(72% 0.15 222 / .3);color:oklch(85% 0.10 222);padding:4px 9px;border-radius:6px;">L6 · OUTCOME</span>
+        </div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid oklch(95% 0.01 260 / .1);margin-bottom:20px;">
+          <div style="display:grid;grid-template-columns:2fr 1fr;padding:11px 16px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);background:oklch(38% 0.02 260 / .3);"><div>Segment</div><div>Churn Rate</div></div>
+          <sc-for list="{{ churnRows }}" as="r" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:2fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);"><div style="font-weight:600;">{{ r.segment }}</div><div style="color:{{ r.color }};font-weight:600;">{{ r.churn }}</div></div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button style="{{ ghostBtnStyle }}">Download PDF</button>
+          <button style="{{ primaryBtnStyle }}">Email Report</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCompareResult }}" hint-placeholder-val="{{ false }}">
+      <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:26px;">
+        <div style="font-size:11px;color:oklch(65% 0.02 260);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">State 3b · Comparison result — "Compare Power Users vs Deal Seekers on retention"</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span style="font-size:10.5px;font-weight:700;background:oklch(72% 0.15 222 / .3);color:oklch(85% 0.10 222);padding:4px 9px;border-radius:6px;">L7 · METRIC INTEGRATION</span>
+          <span style="font-size:11.5px;color:oklch(65% 0.02 260);">granularity: monthly</span>
+        </div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid oklch(95% 0.01 260 / .1);margin-bottom:14px;">
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:oklch(65% 0.02 260);background:oklch(38% 0.02 260 / .3);"><div>Segment</div><div>T-2</div><div>T-1</div><div>T (current)</div></div>
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);"><div style="font-weight:600;">Power Users</div><div>93.5%</div><div>94.6%</div><div>95.8%</div></div>
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);"><div style="font-weight:600;">Deal Seekers</div><div>89.1%</div><div>88.8%</div><div>88.4%</div></div>
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;padding:11px 16px;font-size:13px;border-top:1px solid oklch(95% 0.01 260 / .06);background:oklch(72% 0.15 222 / .12);"><div style="font-weight:700;color:oklch(85% 0.10 222);">Δ Gap · 2-SEG ONLY</div><div>4.4pp</div><div>5.8pp</div><div style="font-weight:700;">7.4pp</div></div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button style="{{ ghostBtnStyle }}">Download PDF</button>
+          <button style="{{ primaryBtnStyle }}">Email Report</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isRootCauseResult }}" hint-placeholder-val="{{ false }}">
+      <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:26px;">
+        <div style="font-size:11px;color:oklch(65% 0.02 260);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">State 3c · Root cause result — "Why did churn increase for Power Users?"</div>
+        <div style="background:oklch(38% 0.02 260 / .3);border-radius:12px;padding:16px;font-size:14px;line-height:1.6;color:oklch(88% 0.01 260);margin-bottom:12px;">
+          Churn among <strong>Power Users</strong> rose after two behavioral clusters merged this quarter, shifting a subset toward lower-engagement patterns. Statistical testing confirms the retention gap vs. Deal Seekers is significant, and feature-level drift on <strong>purchase_frequency</strong> is elevated for the affected cohort.
+        </div>
+        <div style="background:oklch(70% 0.18 25 / .12);border:1px solid oklch(70% 0.18 25 / .3);border-radius:10px;padding:10px 14px;font-size:12px;color:oklch(85% 0.12 25);margin-bottom:18px;">Using data from Q1 2026 — current period data unavailable</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+          <div style="background:oklch(38% 0.02 260 / .28);border-radius:12px;padding:14px;">
+            <span style="font-size:10.5px;font-weight:700;background:oklch(72% 0.15 222 / .3);color:oklch(85% 0.10 222);padding:3px 8px;border-radius:6px;">L2 · DRIFT</span>
+            <div style="font-size:12.5px;margin-top:8px;color:oklch(82% 0.01 260);">1 MERGE event detected this quarter (C2 + C5 → C2)</div>
+          </div>
+          <div style="background:oklch(38% 0.02 260 / .28);border-radius:12px;padding:14px;">
+            <span style="font-size:10.5px;font-weight:700;background:oklch(72% 0.15 222 / .3);color:oklch(85% 0.10 222);padding:3px 8px;border-radius:6px;">L3 · SIGNIFICANCE</span>
+            <div style="font-size:12.5px;margin-top:8px;color:oklch(82% 0.01 260);">p = 0.002, d = 0.41 → DIVERGENT vs Deal Seekers</div>
+          </div>
+          <div style="background:oklch(38% 0.02 260 / .28);border-radius:12px;padding:14px;">
+            <span style="font-size:10.5px;font-weight:700;background:oklch(72% 0.15 222 / .3);color:oklch(85% 0.10 222);padding:3px 8px;border-radius:6px;">L6 · OUTCOME</span>
+            <div style="font-size:12.5px;margin-top:8px;color:oklch(82% 0.01 260);">churn 4.2% → up from 3.1% last quarter</div>
+          </div>
+          <div style="background:oklch(38% 0.02 260 / .28);border-radius:12px;padding:14px;">
+            <span style="font-size:10.5px;font-weight:700;background:oklch(72% 0.15 222 / .3);color:oklch(85% 0.10 222);padding:3px 8px;border-radius:6px;">L8 · FEATURE SIGNAL</span>
+            <div style="font-size:12.5px;margin-top:8px;color:oklch(82% 0.01 260);">purchase_frequency drift fraction 0.64 (MED)</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button style="{{ ghostBtnStyle }}">Download PDF</button>
+          <button style="{{ primaryBtnStyle }}">Email Report</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isOosResult }}" hint-placeholder-val="{{ false }}">
+      <div style="background:oklch(32% 0.02 260 / .30);backdrop-filter:blur(22px);border:1px solid oklch(95% 0.01 260 / .12);border-radius:18px;padding:30px;text-align:center;">
+        <div style="font-size:11px;color:oklch(65% 0.02 260);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">State 3d · Out of scope result — "What should my marketing budget be?"</div>
+        <div style="width:44px;height:44px;border-radius:50%;background:oklch(70% 0.18 25 / .2);border:1px solid oklch(70% 0.18 25 / .4);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:20px;color:oklch(80% 0.15 25);font-weight:700;">!</div>
+        <div style="font-size:15px;font-weight:600;color:oklch(90% 0.01 260);margin-bottom:6px;">This query is outside the queryable space.</div>
+        <div style="font-size:12.5px;color:oklch(65% 0.02 260);">Try asking about segments, drift, retention, or outcomes instead.</div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { query: '', mode: 'idle', resultType: null, focused: false };
+
+  onFocus = () => this.setState({ focused: true });
+  onQueryChange = (e) => this.setState({ query: e.target.value });
+  onSubmit = () => {
+    if (!this.state.query) return;
+    this.setState({ mode: 'processing', focused: false });
+    setTimeout(() => this.setState({ mode: 'result', resultType: this.inferType(this.state.query) }), 1200);
+  };
+  inferType(q) {
+    const s = q.toLowerCase();
+    if (s.includes('compare')) return 'compare';
+    if (s.includes('why')) return 'rootcause';
+    if (s.includes('budget')) return 'oos';
+    return 'show';
+  }
+  goChip = (text) => () => {
+    this.setState({ query: text, mode: 'processing', focused: false });
+    setTimeout(() => this.setState({ mode: 'result', resultType: this.inferType(text) }), 1200);
+  };
+  jumpProcessing = () => this.setState({ mode: 'processing', query: this.state.query || 'Which segment is churning fastest?', focused: false });
+  jumpShow = () => this.setState({ mode: 'result', resultType: 'show', query: 'Show churn rate by segment', focused: false });
+  jumpCompare = () => this.setState({ mode: 'result', resultType: 'compare', query: 'Compare Power Users vs Deal Seekers on retention', focused: false });
+  jumpRootCause = () => this.setState({ mode: 'result', resultType: 'rootcause', query: 'Why did churn increase for Power Users?', focused: false });
+  jumpOos = () => this.setState({ mode: 'result', resultType: 'oos', query: 'What should my marketing budget be?', focused: false });
+
+  renderVals() {
+    const exampleChips = [
+      'Which segment is churning fastest?',
+      'Compare Power Users vs Deal Seekers on retention',
+      'Why did churn increase this quarter?',
+      "Show me this quarter's drift",
+      'Which customers are likely to migrate next quarter?',
+    ].map(text => ({ text, go: this.goChip(text) }));
+
+    const churnRows = [
+      { segment: 'Power Users', churn: '4.2%', color: 'oklch(75% 0.16 150)' },
+      { segment: 'Deal Seekers', churn: '11.6%', color: 'oklch(78% 0.15 80)' },
+      { segment: 'Dormant', churn: '38.7%', color: 'oklch(70% 0.18 25)' },
+      { segment: 'New Adopters', churn: '9.1%', color: 'oklch(75% 0.16 150)' },
+      { segment: 'At-Risk', churn: '24.3%', color: 'oklch(70% 0.18 25)' },
+    ];
+
+    const ghostBtnStyle = 'padding:10px 16px;border-radius:10px;background:oklch(40% 0.02 260 / .35);border:1px solid oklch(95% 0.01 260 / .14);color:oklch(92% 0.01 260);font-size:13px;font-weight:600;cursor:pointer;';
+    const primaryBtnStyle = 'padding:10px 16px;border-radius:10px;background:linear-gradient(135deg, oklch(72% 0.15 222), oklch(78% 0.13 195));border:none;color:oklch(12% 0.02 260);font-size:13px;font-weight:700;cursor:pointer;';
+    const jumpBtnStyle = 'padding:7px 12px;border-radius:8px;background:oklch(38% 0.02 260 / .3);border:1px solid oklch(95% 0.01 260 / .12);color:oklch(85% 0.01 260);font-size:11.5px;cursor:pointer;';
+
+    return {
+      query: this.state.query, showChips: this.state.focused && this.state.mode === 'idle', exampleChips,
+      isProcessing: this.state.mode === 'processing',
+      isShowResult: this.state.mode === 'result' && this.state.resultType === 'show',
+      isCompareResult: this.state.mode === 'result' && this.state.resultType === 'compare',
+      isRootCauseResult: this.state.mode === 'result' && this.state.resultType === 'rootcause',
+      isOosResult: this.state.mode === 'result' && this.state.resultType === 'oos',
+      churnRows, ghostBtnStyle, primaryBtnStyle, jumpBtnStyle,
+      onFocus: this.onFocus, onQueryChange: this.onQueryChange, onSubmit: this.onSubmit,
+      jumpProcessing: this.jumpProcessing, jumpShow: this.jumpShow, jumpCompare: this.jumpCompare, jumpRootCause: this.jumpRootCause, jumpOos: this.jumpOos,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
