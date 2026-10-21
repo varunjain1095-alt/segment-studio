@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Segmentation Studio — Executive Dashboard</title>
+  <title>Customer Segmentation Studio: Executive Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -684,7 +684,7 @@
 
       <div class="topbar-search">
         <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" placeholder="Ask Your Data — e.g. Which segment is churning fastest?" onkeypress="if(event.key==='Enter') quickQuery(this.value)">
+        <input type="text" placeholder="Ask Your Data, e.g. Which segment is churning fastest?" onkeypress="if(event.key==='Enter') quickQuery(this.value)">
       </div>
 
       <div class="topbar-actions" style="display: flex; align-items: center; gap: 12px;">
@@ -855,7 +855,7 @@
         <div class="card">
           <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
-              <div class="card-title">L1 — Demographic Segmentation & MoM Tracking</div>
+              <div class="card-title">L1: Demographic Segmentation & MoM Tracking</div>
               <div class="card-subtitle">Month-over-Month growth trends and cohort distribution</div>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -1049,19 +1049,19 @@
           <div class="card-header" style="border-bottom: none; padding-bottom: 0;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 18px;">💡</span>
-              <div class="card-title" style="color: var(--primary);">PM AI Executive Summary: What These Stats Mean for You</div>
+              <div class="card-title" style="color: var(--primary);">PM AI Executive Summary</div>
             </div>
             <span class="badge badge-info">Automated Plain-English Translation</span>
           </div>
           <div style="padding: 16px 20px; font-size: 13px; line-height: 1.6; color: var(--text-main);">
             <p style="margin-bottom: 8px;">
-              <strong>Key Finding 1 (Divergent Cohorts):</strong> <em>Power Users</em> and <em>Deal Seekers</em> exhibit statistically verified differences in Order Frequency (<strong>p &lt; 0.001</strong>, Cohen's <em>d</em> = 1.42). The data indicates a difference, supporting review to decide if differentiated treatment is appropriate.
+              <strong>Key Finding 1 (Divergent Cohorts):</strong> <em>Power Users</em> and <em>Deal Seekers</em> show statistically verified differences in Order Frequency (<strong>p &lt; 0.001</strong>, Cohen's <em>d</em> = 1.42). The gap supports reviewing differentiated treatment.
             </p>
             <p style="margin-bottom: 8px;">
-              <strong>Key Finding 2 (Severe LTV Gap):</strong> The <strong>1.85 Effect Size</strong> between <em>Power Users</em> and <em>Slipping Customers</em> confirms a high-conviction outcome difference—preventing customer migration into Slipping state coincided with protected revenue.
+              <strong>Key Finding 2 (Severe LTV Gap):</strong> The <strong>1.85 Effect Size</strong> between <em>Power Users</em> and <em>Slipping Customers</em> confirms a large outcome gap. In simulation, preventing migration into the Slipping state coincided with protected revenue.
             </p>
             <p>
-              <strong>Key Finding 3 (Candidate for Unified Handling):</strong> <em>Deal Seekers</em> and <em>Slipping Customers</em> show no statistically significant difference in Return Rate (<strong>p = 0.420</strong>, <em>d</em> = 0.08). No meaningful difference detected—eligible for unified return policy consideration.
+              <strong>Key Finding 3 (Candidate for Unified Handling):</strong> <em>Deal Seekers</em> and <em>Slipping Customers</em> show no statistically significant difference in Return Rate (<strong>p = 0.420</strong>, <em>d</em> = 0.08). No meaningful difference detected. Eligible for unified return policy consideration.
             </p>
           </div>
         </div>
@@ -1098,7 +1098,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">L3 — Statistical Significance Testing Matrix</div>
+              <div class="card-title">L3: Statistical Significance Testing Matrix</div>
               <div class="card-subtitle">Pairwise significance testing across cluster outcome metrics (Dunn post-hoc / Tukey HSD)</div>
             </div>
           </div>
@@ -1112,7 +1112,7 @@
                 <th>p-Value <span title="Probability of false alarm (p < 0.05 is statistically significant)">ⓘ</span></th>
                 <th>Effect Size <span title="Magnitude of difference: 0.2 Small, 0.5 Med, 0.8+ Large">ⓘ</span></th>
                 <th>Verdict</th>
-                <th>Plain-English PM Meaning & Actionable Takeaway</th>
+                <th>Plain-English PM Meaning & Takeaway</th>
               </tr>
             </thead>
             <tbody id="l3-tests-tbody">
@@ -1132,7 +1132,7 @@
         <div class="card" style="margin-bottom: 24px;">
           <div class="card-header">
             <div>
-              <div class="card-title">L4 — Supervised Predictive Migration Model Benchmarking</div>
+              <div class="card-title">L4: Supervised Predictive Migration Model Benchmarking</div>
               <div class="card-subtitle">Predicting customer cluster migration labels from period T to T+1</div>
             </div>
             <span class="badge badge-success" id="l4-winning-badge">Winning Model: Loading...</span>
@@ -1199,8 +1199,8 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 12px;">
-              <div>Precision: <strong id="l4-prec-val">—%</strong></div>
-              <div>Recall: <strong id="l4-rec-val">—%</strong></div>
+              <div>Precision: <strong id="l4-prec-val"></strong></div>
+              <div>Recall: <strong id="l4-rec-val"></strong></div>
               <div>Net ROI Gain: <strong style="color: var(--success);" id="l4-net-roi">$0</strong></div>
             </div>
           </div>
@@ -1275,7 +1275,7 @@
         <div class="card" style="margin-bottom: 24px;">
           <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
             <div>
-              <div class="card-title">L5 — Markov Transition Probability Matrix & Forecast</div>
+              <div class="card-title">L5: Markov Transition Probability Matrix & Forecast</div>
               <div class="card-subtitle">Row-normalized transition probabilities showing segment mobility over multi-period horizons</div>
             </div>
             <div style="display: flex; gap: 8px;">
@@ -1336,7 +1336,7 @@
             <input type="range" id="l5-inter-slider" min="0" max="60" step="5" value="25" style="width: 100%; cursor: pointer;" oninput="updateL5Intervention(this.value)">
             <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 2px;">
               <span>0% (Baseline 12.0% Downward Drift)</span>
-              <span>60% (High Intervention — 4.8% Drift)</span>
+              <span>60% (High Intervention: 4.8% Drift)</span>
             </div>
           </div>
 
@@ -1381,7 +1381,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">L6 — Business Metric Impact & Strategy Matrix</div>
+              <div class="card-title">L6: Business Metric Impact & Strategy Matrix</div>
               <div class="card-subtitle">Business outcomes per segment: churn, retention, revenue, and repeat purchase.</div>
             </div>
           </div>
@@ -1432,7 +1432,7 @@
         <div class="card">
           <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
             <div>
-              <div class="card-title">L7 — Cross-Segment Metric Pivot Comparison</div>
+              <div class="card-title">L7: Cross-Segment Metric Pivot Comparison</div>
               <div class="card-subtitle">Select operational metric to pivot side-by-side performance across observed periods</div>
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -1504,7 +1504,7 @@
         <div class="card">
           <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
             <div>
-              <div class="card-title">L8 — Feature-Level Customer Migration Signals & Command Center</div>
+              <div class="card-title">L8: Feature-Level Customer Migration Signals & Command Center</div>
               <div class="card-subtitle">Per-customer early warning signals, feature alignment, and immediate PM workflows</div>
             </div>
             <div style="display: flex; gap: 8px;">
@@ -1587,7 +1587,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">A1 — Executive Quarterly Briefing & Narration</div>
+              <div class="card-title">A1: Executive Quarterly Briefing & Narration</div>
               <div class="card-subtitle">Automated AI briefing generated by Agent 1 for executive stakeholders</div>
             </div>
             <button class="btn btn-secondary" onclick="alert('Exporting PDF briefing...')">Export Briefing (PDF)</button>
@@ -1604,7 +1604,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">A2 — Ask Your Data (Natural Language Query Assistant)</div>
+              <div class="card-title">A2: Ask Your Data (Natural Language Query Assistant)</div>
               <div class="card-subtitle">Query any segment, metric, or migration pattern using natural language</div>
             </div>
           </div>
@@ -1617,7 +1617,7 @@
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span class="badge badge-info" style="cursor: pointer;" onclick="document.getElementById('a2-input').value=this.innerText; submitA2Query();">Which segment is churning fastest?</span>
               <span class="badge badge-info" style="cursor: pointer;" onclick="document.getElementById('a2-input').value=this.innerText; submitA2Query();">Compare Power Users and Slipping Customers</span>
-              <span class="badge badge-info" style="cursor: pointer;" onclick="document.getElementById('a2-input').value=this.innerText; submitA2Query();">Show this quarter’s migration pattern</span>
+              <span class="badge badge-info" style="cursor: pointer;" onclick="document.getElementById('a2-input').value=this.innerText; submitA2Query();">Show this quarter's migration pattern</span>
             </div>
           </div>
 
@@ -1684,7 +1684,7 @@
         'mom': "MoM Growth:\nMonth-over-Month percentage change in segment size: ((Current - Prior) / Prior) * 100.",
         'noise': "Historical Noise Band:\nExpected baseline variance threshold (±%) calculated from past fluctuations. Movements within this band represent normal organic variance.",
         'volatility': "Volatility Status (Detailed Explanation):\n\n• STABLE (Green):\nGrowth is strictly inside historical noise bands (≤ ±Noise Band). Represents normal organic behavior.\n\n• HIGH DRIFT (Yellow):\nGrowth accelerates and breaches historical noise bands, indicating an emerging cohort shift or trend.\n\n• ANOMALY FLAGGED (Red):\nSevere divergence (>2x noise band), indicating abnormal churn or influx that requires immediate PM investigation.",
-        'actions': "PM Actions:\nDeep-dive analytical actions for this cohort. 'Isolate & Study' inspects granular customer records; 'Notes' opens shared annotations and tracking logs."
+        'actions': "PM Actions:\nDrill-down actions for this cohort. 'Isolate & Study' inspects granular customer records; 'Notes' opens shared annotations and tracking logs."
       };
       alert(descriptions[col] || "Column description");
     }
@@ -1882,16 +1882,16 @@
       const titles = {
         'panel-00': ['00 Setup & Post-Ingestion Audit', 'Overview of ingestion rules, clean datasets, and audit history'],
         'panel-wizard': ['6-Step Data Ingestion Wizard', 'Guided PM setup, data cleaning, and field classification'],
-        'panel-l1': ['L1 — Demographic Segmentation', 'Month-over-Month growth trends and cohort distribution'],
-        'panel-l2': ['L2 — Behavioral Clustering', 'Baseline cluster identities, PM naming, and quality metrics'],
-        'panel-l3': ['L3 — Statistical Significance Testing', 'Pairwise Dunn / Tukey outcome metric comparisons'],
-        'panel-l4': ['L4 — Predictive Segmentation', 'Supervised migration classifier benchmarking & predictions'],
-        'panel-l5': ['L5 — Migration Matrix & Forecasting', 'Markov transition probability matrix (T → T+1)'],
-        'panel-l6': ['L6 — Outcome Analysis', 'Business outcomes per segment: churn, retention, revenue, and repeat purchase.'],
-        'panel-l7': ['L7 — Metric Integration Pivot', 'Multi-segment pivot table with signed Δ Gap calculation'],
-        'panel-l8': ['L8 — Feature Migration Signals', 'Per-customer early warning feature drift detection'],
-        'panel-a1': ['A1 — Executive Quarterly Briefing', 'Automated AI narration for executive stakeholders'],
-        'panel-a2': ['A2 — Ask Your Data', 'Natural language query routing and execution']
+        'panel-l1': ['L1: Demographic Segmentation', 'Month-over-Month growth trends and cohort distribution'],
+        'panel-l2': ['L2: Behavioral Clustering', 'Baseline cluster identities, PM naming, and quality metrics'],
+        'panel-l3': ['L3: Statistical Significance Testing', 'Pairwise Dunn / Tukey outcome metric comparisons'],
+        'panel-l4': ['L4: Predictive Segmentation', 'Supervised migration classifier benchmarking & predictions'],
+        'panel-l5': ['L5: Migration Matrix & Forecasting', 'Markov transition probability matrix (T → T+1)'],
+        'panel-l6': ['L6: Outcome Analysis', 'Business outcomes per segment: churn, retention, revenue, and repeat purchase.'],
+        'panel-l7': ['L7: Metric Integration Pivot', 'Multi-segment pivot table with signed Δ Gap calculation'],
+        'panel-l8': ['L8: Feature Migration Signals', 'Per-customer early warning feature drift detection'],
+        'panel-a1': ['A1: Executive Quarterly Briefing', 'Automated AI narration for executive stakeholders'],
+        'panel-a2': ['A2: Ask Your Data', 'Natural language query routing and execution']
       };
 
       if (titles[panelId]) {
@@ -1928,7 +1928,7 @@
     // --- L1 DEMOGRAPHICS LOADER ---
     let currentL1Dimension = 'All';
 
-    // Canonical Period 1 (2024-Q4) demographic segment metrics — hardcoded dataset
+    // Canonical Period 1 (2024-Q4) demographic segment metrics: hardcoded dataset
     // snapshot so the dashboard renders without a database connection.
     const canonicalL1Segments = [
       { segment_field: 'Age Bracket', segment_value: '36-50', segment_size: 1686, prev_segment_size: 1500, mom_pct_change: 12.40 },
@@ -1988,10 +1988,10 @@
           const field = r.segment_field || 'Segment';
           const val = r.segment_value || 'Unknown';
           const label = `${field}: ${val}`;
-          const sizeStr = r.segment_size != null ? r.segment_size.toLocaleString() : '—';
-          const prevSizeStr = r.prev_segment_size != null ? r.prev_segment_size.toLocaleString() : '—';
+          const sizeStr = r.segment_size != null ? r.segment_size.toLocaleString() : '';
+          const prevSizeStr = r.prev_segment_size != null ? r.prev_segment_size.toLocaleString() : '';
           
-          let momStr = '—';
+          let momStr = '';
           let momColor = 'var(--text-main)';
           if (r.mom_pct_change != null) {
             const sign = r.mom_pct_change > 0 ? '+' : '';
@@ -2299,8 +2299,8 @@
           }
           const varName = (t.test_variable || 'metric').replace(/_/g, ' ').toUpperCase();
           const testName = (t.test_type || 'Test').toUpperCase();
-          const pValStr = (t.p_value != null) ? (t.p_value < 0.001 ? 'p < 0.001' : (t.p_value === 0 ? 'p < 0.001' : `p = ${t.p_value.toFixed(3)}`)) : '—';
-          const effStr = (t.effect_size != null) ? t.effect_size.toFixed(2) : '—';
+          const pValStr = (t.p_value != null) ? (t.p_value < 0.001 ? 'p < 0.001' : (t.p_value === 0 ? 'p < 0.001' : `p = ${t.p_value.toFixed(3)}`)) : '';
+          const effStr = (t.effect_size != null) ? t.effect_size.toFixed(2) : '';
 
           let takeaway = t.significant
             ? `<strong style="color: var(--warning);">Statistically Verified Difference:</strong> ${pValStr}, d = ${effStr}. Empirical difference detected. Review separately to decide if differentiated treatment is appropriate.`
@@ -2750,7 +2750,7 @@
 
           return `
             <tr>
-              <td><strong>${o.cluster_label}</strong> (${o.cluster_size ? o.cluster_size.toLocaleString() : '—'} accts)</td>
+              <td><strong>${o.cluster_label}</strong> (${o.cluster_size ? o.cluster_size.toLocaleString() : ''} accts)</td>
               <td><span style="color: ${churnColor}; font-weight: 700;">${o.churn_rate.toFixed(2)}%</span></td>
               <td><span style="color: var(--success); font-weight: 600;">${o.retention_rate.toFixed(2)}%</span></td>
               <td><strong>${revStr}</strong></td>
@@ -3034,7 +3034,7 @@
       const formattedHtml = `
         <div style="max-width: 900px; margin: 0 auto; line-height: 1.75;">
           <div style="border-bottom: 2px solid var(--border); padding-bottom: 14px; margin-bottom: 20px;">
-            <h2 style="font-size: 20px; font-weight: 700; color: var(--primary); margin: 0 0 6px 0;">Executive Quarterly Briefing — 2024-Q4 (T)</h2>
+            <h2 style="font-size: 20px; font-weight: 700; color: var(--primary); margin: 0 0 6px 0;">Executive Quarterly Briefing: 2024-Q4 (T)</h2>
             <div style="font-size: 13px; color: var(--text-muted);">
               Automated portfolio decision-support analysis across <strong>4,328 active customer accounts</strong>.
             </div>
@@ -3043,17 +3043,17 @@
           <div style="margin-bottom: 22px;">
             <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin: 0 0 8px 0;">1. Behavioral Cluster Architecture (Layer 2)</h3>
             <p style="margin: 0 0 10px 0;">
-              The active customer portfolio is organized into three distinct behavioral cohorts establishing the operational baseline for 2024-Q4:
+              The active customer portfolio splits into three behavioral cohorts that form the operational baseline for 2024-Q4:
             </p>
             <ul style="margin: 0 0 12px 20px; padding: 0;">
               <li style="margin-bottom: 6px;">
-                <strong>Power Users (Cluster 2):</strong> 2,179 accounts (50.3% of active base). Core high-value segment characterized by frequent reorders and extended browsing depth.
+                <strong>Power Users (Cluster 2):</strong> 2,179 accounts (50.3% of active base). Core high-value segment with frequent reorders and extended browsing depth.
               </li>
               <li style="margin-bottom: 6px;">
-                <strong>Deal Seekers (Cluster 3):</strong> 1,754 accounts (40.5% of active base). Price-responsive segment characterized by high catalog comparison and promotional engagement.
+                <strong>Deal Seekers (Cluster 3):</strong> 1,754 accounts (40.5% of active base). Price-responsive segment with high catalog comparison and promotional engagement.
               </li>
               <li style="margin-bottom: 6px;">
-                <strong>Slipping Customers (Cluster 1):</strong> 395 accounts (9.1% of active base). At-risk cohort exhibiting contracted session durations and diminishing purchase velocity.
+                <strong>Slipping Customers (Cluster 1):</strong> 395 accounts (9.1% of active base). At-risk cohort with contracted session durations and diminishing purchase velocity.
               </li>
             </ul>
           </div>
@@ -3061,7 +3061,7 @@
           <div style="margin-bottom: 22px;">
             <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin: 0 0 8px 0;">2. Business Outcomes & Commercial Impact (Layer 6)</h3>
             <p style="margin: 0 0 10px 0;">
-              Commercial performance reveals pronounced divergence across retention, revenue contribution, and repeat purchasing:
+              Commercial performance diverges sharply across retention, revenue contribution, and repeat purchasing:
             </p>
             <ul style="margin: 0 0 12px 20px; padding: 0;">
               <li style="margin-bottom: 6px;">
@@ -3079,17 +3079,17 @@
           <div style="margin-bottom: 22px;">
             <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin: 0 0 8px 0;">3. Statistical Divergence Validation (Layer 3)</h3>
             <p style="margin: 0 0 10px 0;">
-              Pairwise statistical tests (Tukey HSD / Holm-adjusted Dunn) confirmed that observed differences between segments are statistically detectable:
+              Pairwise statistical tests (Tukey HSD / Holm-adjusted Dunn) confirm the differences between segments are statistically detectable:
             </p>
             <ul style="margin: 0 0 12px 20px; padding: 0;">
               <li style="margin-bottom: 6px;">
-                The revenue divergence between <strong>Power Users</strong> and <strong>Slipping Customers</strong> is statistically verified (<em>p</em> &lt; 0.001, Cohen's <em>d</em> = 1.85), indicating a high-magnitude outcome gap.
+                The revenue divergence between <strong>Power Users</strong> and <strong>Slipping Customers</strong> is statistically verified (<em>p</em> &lt; 0.001, Cohen's <em>d</em> = 1.85): a high-magnitude outcome gap.
               </li>
               <li style="margin-bottom: 6px;">
-                Order frequency variance between <strong>Power Users</strong> and <strong>Deal Seekers</strong> was statistically detectable (<em>p</em> &lt; 0.001, <em>d</em> = 1.42), indicating an empirical difference that supports differentiated catalog experiences.
+                Order frequency variance between <strong>Power Users</strong> and <strong>Deal Seekers</strong> was statistically detectable (<em>p</em> &lt; 0.001, <em>d</em> = 1.42): the difference supports differentiated catalog experiences.
               </li>
               <li style="margin-bottom: 6px;">
-                Return rates between <strong>Deal Seekers</strong> and <strong>Slipping Customers</strong> showed no meaningful difference (<em>p</em> = 0.420, <em>d</em> = 0.08), supporting review for unified policy consideration.
+                Return rates between <strong>Deal Seekers</strong> and <strong>Slipping Customers</strong> showed no meaningful difference (<em>p</em> = 0.420, <em>d</em> = 0.08), making a unified return policy a candidate.
               </li>
             </ul>
           </div>
@@ -3097,7 +3097,7 @@
           <div style="margin-bottom: 22px;">
             <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin: 0 0 8px 0;">4. Predictive Migration & Transition Mobility (Layers 4 & 5)</h3>
             <p style="margin: 0 0 10px 0;">
-              Predictive models and the quarterly Markov transition matrix demonstrate that:
+              Predictive models and the quarterly Markov transition matrix show:
             </p>
             <ul style="margin: 0 0 12px 20px; padding: 0;">
               <li style="margin-bottom: 6px;">
@@ -3107,7 +3107,7 @@
                 Downward value drift toward the Slipping classification is observed at <strong>12.0%</strong> across adjacent cohorts.
               </li>
               <li style="margin-bottom: 6px;">
-                Simulation modeling indicates that a proactive 25% reduction in downward drift coincided with approximately <strong>130 accounts protected</strong> and an estimated <strong>$52,000 in quarterly revenue preserved</strong>.
+                A simulated 25% reduction in downward drift coincided with roughly <strong>130 accounts protected</strong> and an estimated <strong>$52,000 in quarterly revenue preserved</strong>.
               </li>
             </ul>
           </div>
@@ -3115,7 +3115,7 @@
           <div>
             <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin: 0 0 8px 0;">5. Early Warning Feature Signals & Suggested PM Response (Layer 8)</h3>
             <p style="margin: 0;">
-              Feature-level drift monitoring flagged <strong>142 accounts (3.3% of active base)</strong> exhibiting behavioral alignment with slipping patterns prior to formal cluster reassignment. In particular, 48 high-severity accounts show &gt;50% feature alignment with lower-value behaviors, supporting immediate review and targeted win-back outreach.
+              Feature-level drift monitoring flagged <strong>142 accounts (3.3% of active base)</strong> showing behavioral alignment with slipping patterns before formal cluster reassignment. Of these, 48 high-severity accounts show &gt;50% feature alignment with lower-value behaviors and warrant immediate review and targeted win-back outreach.
             </p>
           </div>
         </div>
@@ -3186,13 +3186,13 @@
       const lower = q.toLowerCase();
       if (lower.includes('churn') || lower.includes('fastest') || lower.includes('slipping')) {
         routedBox.innerText = '→ routed to L6 · Outcome Analysis';
-        ansBox.innerText = 'Slipping Customers exhibit the highest churn rate at 44.56% (retention rate: 55.44%), generating $503,890 in total revenue with an average repeat purchase probability of 26.6% across 395 accounts.';
+        ansBox.innerText = 'Slipping Customers have the highest churn rate at 44.56% (retention rate: 55.44%), generating $503,890 in total revenue with an average repeat purchase probability of 26.6% across 395 accounts.';
       } else if (lower.includes('compare') || lower.includes('power user') || lower.includes('gap')) {
         routedBox.innerText = '→ routed to L7 · Cross-Segment Metric Pivot';
         ansBox.innerText = 'In 2024-Q4, Power Users maintain a 0.00% churn rate and $16,193,949 in revenue across 2,179 accounts, compared to Slipping Customers with 44.56% churn and $503,890 in revenue across 395 accounts. The signed churn rate gap is −44.6 percentage points.';
       } else if (lower.includes('migration') || lower.includes('pattern') || lower.includes('mobility')) {
         routedBox.innerText = '→ routed to L5 · Mobility Forecaster';
-        ansBox.innerText = '2024-Q4 transition modeling indicates 76.4% segment stability, 11.6% upward mobility into higher-value tiers, and 12.0% downward value drift toward the Slipping cluster.';
+        ansBox.innerText = '2024-Q4 transition modeling shows 76.4% segment stability, 11.6% upward mobility into higher-value tiers, and 12.0% downward value drift toward the Slipping cluster.';
       } else {
         routedBox.innerText = '→ routed to L6 · Outcome Analysis';
         ansBox.innerText = 'Active customer portfolio (4,328 accounts): Power Users (2,179 accounts, $16.19M rev, 100% retention), Deal Seekers (1,754 accounts, $3.26M rev, 100% retention), and Slipping Customers (395 accounts, $503.89K rev, 55.44% retention).';
